@@ -9,8 +9,8 @@
           v-bind:baseFret="chart.value.baseFret"
         ></ChordDiagram>
       </span>
-      <span v-else-if="chart.kind === 'word'">
-        {{chart.value | escapeChar}}
+      <span v-else-if="chart.kind === 'word'">{{chart.value | escapeChar}}</span>
+      <span class="space" v-else-if="chart.kind === 'space'" v-text="chart.value">
       </span>
       <br v-else-if="chart.kind === 'newline'">
     </span>
@@ -40,5 +40,8 @@ export default {
 
 <style scoped>
 .container {
+}
+.space {
+  white-space: pre;
 }
 </style>
