@@ -209,35 +209,37 @@ export default new Vuex.Store({
     keyMin: -6,
     keyMax: 6,
     chords: chords,
-    parsedTokens: []
+    tokens: []
   },
   mutations: {
     key_up (state) {
       if (state.key < state.keyMax) {
+        state.tokens = transpose(state.tokens, 1)
         state.key++
       }
     },
     key_down (state) {
       if (state.key > state.keyMin) {
+        state.tokens = transpose(state.tokens, -1)
         state.key--
       }
     },
     key_reset (state) {
-      state.key = 0
+      if (state.key !== 0) {
+        state.tokens = transpose(state.tokens, 0 - state.key)
+        state.key = 0
+      }
     }
   },
   getters: {
-    tokens (state) {
-      return transpose(state.parsedTokens, state.key)
+    errors (state) {
+      return validate(state.tokens, state.chords)
     },
-    errors (state, getters) {
-      return validate(getters.tokens, state.chords)
+    charts (state) {
+      return convertChart(state.tokens, state.chords)
     },
-    charts (state, getters) {
-      return convertChart(getters.tokens, state.chords)
-    },
-    text (state, getters) {
-      return rebuildingText(getters.tokens)
+    text (state) {
+      return rebuildingText(state.tokens)
     }
   },
   actions: {
@@ -251,7 +253,7 @@ export default new Vuex.Store({
       context.commit('key_reset')
     },
     parse (context, text) {
-      context.state.parsedTokens = tokenize(text)
+      context.state.tokens = tokenize(text)
     }
   },
   modules: {
