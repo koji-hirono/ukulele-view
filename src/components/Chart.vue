@@ -10,7 +10,7 @@
         ></ChordDiagram>
       </span>
       <span v-else-if="chart.kind === 'word'">
-        {{chart.value}}
+        {{chart.value | escapeChar}}
       </span>
       <br v-else-if="chart.kind === 'newline'">
     </span>
@@ -28,6 +28,11 @@ export default {
   computed: {
     charts () {
       return this.$store.getters.charts
+    }
+  },
+  filters: {
+    escapeChar (s) {
+      return s[0] === '\\' ? s.slice(1) : s
     }
   }
 }
