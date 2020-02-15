@@ -27,7 +27,7 @@ export default {
   },
   computed: {
     charts () {
-      return this.$store.state.charts
+      return this.$store.getters.charts
     }
   }
 }
