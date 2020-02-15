@@ -1,15 +1,27 @@
 <template>
   <div>
-    <textarea v-model="text" cols="60" rows="14"></textarea>
+    <textarea v-bind:value="text" v-on:input="inputText" cols="50" rows="10"></textarea>
+    <ul v-if="errors.length != 0">
+      <li class="error" v-for="error in errors" v-bind:key="error">{{ error }}</li>
+    </ul>
   </div>
 </template>
 
 <script>
+
 export default {
   name: 'ChartForm',
-  data () {
-    return {
-      text: ''
+  computed: {
+    text () {
+      return this.$store.state.text
+    },
+    errors () {
+      return this.$store.state.errors
+    }
+  },
+  methods: {
+    inputText (ev) {
+      this.$store.dispatch('parse', ev.target.value)
     }
   }
 }
@@ -20,5 +32,8 @@ textarea {
   font-family: monospace;
   font-size: 1.5em;
   white-space: pre;
+}
+.error {
+  color: #c33;
 }
 </style>

@@ -1,9 +1,9 @@
 <template>
   <div class="container">
     <div>
-      <button type="button" v-on:click="transpose_down">&#x266D;</button>
-      <button type="button" v-on:click="transpose_reset">&#x266E;</button>
-      <button type="button" v-on:click="transpose_up">&#x266F;</button>
+      <button type="button" v-on:click="key_down">&#x266D;</button>
+      <button type="button" v-on:click="key_reset">&#x266E;</button>
+      <button type="button" v-on:click="key_up">&#x266F;</button>
     </div>
     <div>
       <span v-for="k in keyRange" v-bind:key="k">
@@ -21,25 +21,27 @@
 <script>
 export default {
   name: 'KeyControl',
-  data () {
-    return {
-      key: 0,
-      keyRange: [-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6]
+  computed: {
+    key () {
+      return this.$store.state.key
+    },
+    keyRange () {
+      const a = []
+      for (let i = this.$store.state.keyMin; i <= this.$store.state.keyMax; i++) {
+        a.push(i)
+      }
+      return a
     }
   },
   methods: {
-    transpose_down () {
-      if (this.key > -6) {
-        this.key--
-      }
+    key_down () {
+      this.$store.dispatch('key_down')
     },
-    transpose_up () {
-      if (this.key < 6) {
-        this.key++
-      }
+    key_up () {
+      this.$store.dispatch('key_up')
     },
-    transpose_reset () {
-      this.key = 0
+    key_reset () {
+      this.$store.dispatch('key_reset')
     }
   }
 }
