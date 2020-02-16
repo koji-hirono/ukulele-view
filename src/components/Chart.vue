@@ -40,6 +40,8 @@
 import ChordDiagram from '@/components/ChordDiagram'
 import Modal from '@/components/Modal'
 
+// select した後、$store.tokensに反映する処理が必要
+// charts はgetterなので、上書きしても反映されない。
 export default {
   name: 'Chart',
   data () {

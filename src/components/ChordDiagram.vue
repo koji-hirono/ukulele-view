@@ -1,40 +1,52 @@
 <template>
-  <svg width="90" height="124" viewBox="0 0 90 124">
-    <text x="0" y="18" font-size="18">{{ name }}</text>
-    <text x="0" y="50" font-size="14"
-      v-show="baseFretVisible">{{ baseFret }}</text>
-    <g transform="translate(18,34)">
-      <g transform="translate(0,2)">
-        <rect height="80" width="2" x="0" fill="#888"></rect>
-        <rect height="80" width="2" x="20" fill="#888"></rect>
-        <rect height="80" width="2" x="40" fill="#888"></rect>
-        <rect height="80" width="2" x="60" fill="#888"></rect>
-      </g>
-      <g transform="translate(0,2)">
-        <rect height="2" width="62" y="0" fill="#888"></rect>
-        <rect height="2" width="62" y="20" fill="#888"></rect>
-        <rect height="2" width="62" y="40" fill="#888"></rect>
-        <rect height="2" width="62" y="60" fill="#888"></rect>
-        <rect height="2" width="62" y="80" fill="#888"></rect>
-      </g>
-      <g transform="translate(1,12)">
-        <g v-for="(finger, i) in fingers" v-bind:key="i">
-          <g v-bind:transform="'translate(' + (i * 20) + ',' + fret_y[i] + ')'"
-             v-show="closedStringVisible[i]">
-            <circle r="7"></circle>
-            <text fill="white" y="4" text-anchor="middle">{{finger}}</text>
-          </g>
-        </g>
-      </g>
-      <g transform="translate(1,-10)">
-        <g v-for="(v, i) in openStringVisible" v-bind:key="i">
-          <circle v-bind:cx="i * 20" r="3"
-            fill="none" stroke="black" stroke-width="1" v-show="v"></circle>
+  <svg width="80" height="60" viewBox="0 0 80 60">
+    <!-- chord name -->
+    <text x="0" y="11" font-size="10">{{ name }}</text>
+
+    <g transform="translate(0,18)">
+      <!-- open string -->
+      <circle v-show="openStringVisible[3]"
+          cx="3" cy="0" r="2" fill="#fff" stroke="#000"/>
+      <circle v-show="openStringVisible[2]"
+          cx="3" cy="10" r="2" fill="#fff" stroke="#000"/>
+      <circle v-show="openStringVisible[1]"
+          cx="3" cy="20" r="2" fill="#fff" stroke="#000"/>
+      <circle v-show="openStringVisible[0]"
+          cx="3" cy="30" r="2" fill="#fff" stroke="#000"/>
+      <!-- frame -->
+      <g transform="translate(8, 0)">
+        <!-- string -->
+        <line x1="0" y1="0" x2="70" y2="0" stroke="#000"/>
+        <line x1="0" y1="10" x2="70" y2="10" stroke="#000"/>
+        <line x1="0" y1="20" x2="70" y2="20" stroke="#000"/>
+        <line x1="0" y1="30" x2="70" y2="30" stroke="#000"/>
+        <!-- fret -->
+        <!-- 0 -->
+        <line v-show="!baseFretVisible" x1="0" y1="0" x2="0" y2="30"
+            stroke="#888"/>
+        <g transform="translate(3, 0)">
+          <line x1="0" y1="0" x2="0" y2="30" stroke="#888"/>
+          <line x1="14" y1="0" x2="14" y2="30" stroke="#888"/>
+          <line x1="28" y1="0" x2="28" y2="30" stroke="#888"/>
+          <line x1="42" y1="0" x2="42" y2="30" stroke="#888"/>
+          <line x1="56" y1="0" x2="56" y2="30" stroke="#888"/>
+
+          <!-- base fret -->
+          <text v-show="baseFretVisible" x="7" y="40"
+              text-anchor="middle" font-size="9">{{ baseFret }}</text>
+
+          <!-- close string -->
+          <circle v-show="closedStringVisible[3]"
+              :cx="fret_x[3]" cy="0" r="3" fill="#000"/>
+          <circle v-show="closedStringVisible[2]"
+              :cx="fret_x[2]" cy="10" r="3" fill="#000"/>
+          <circle v-show="closedStringVisible[1]"
+              :cx="fret_x[1]" cy="20" r="3" fill="#000"/>
+          <circle v-show="closedStringVisible[0]"
+              :cx="fret_x[0]" cy="30" r="3" fill="#000"/>
         </g>
       </g>
     </g>
-    <line x1="17" y1="34" x2="81" y2="34" stroke="#000" stroke-width="6"
-          stroke-linecap="round" v-show="!baseFretVisible"></line>
   </svg>
 </template>
 
@@ -65,10 +77,10 @@ export default {
     baseFretVisible () {
       return this.baseFret !== 1
     },
-    fret_y () {
+    fret_x () {
       const a = {}
       for (const k in this.frets) {
-        a[k] = (this.frets[k] - 1) * 20
+        a[k] = (this.frets[k] - 1) * 14 + 7
       }
       return a
     }
@@ -77,7 +89,4 @@ export default {
 </script>
 
 <style scoped>
-svg {
-  font-size: 11px;
-}
 </style>
