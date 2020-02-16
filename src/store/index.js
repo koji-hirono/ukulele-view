@@ -58,7 +58,7 @@ const normalizeAttr = function (attr) {
 
 const tokenize = function (text) {
   const specs = [
-    ['chord', '[A-G][#b]?[a-zA-Z0-9_()]*'],
+    ['chord', '[A-G][#b]?[a-zA-Z0-9_()]*(?:@\\d+)?'],
     ['space', '[ \\t]+'],
     ['newline', '\\n'],
     ['word', '[^ \\t\\n]+']
@@ -71,12 +71,14 @@ const tokenize = function (text) {
     const kind = specs.find((e, i) => m[i + 1] !== undefined)[0]
     let value
     if (kind === 'chord') {
-      const ma = m[0].match(/^([A-G][#b]?)(.*)$/u)
+      const ma = m[0].match(/^([A-G][#b]?)([a-zA-Z0-9_()]*)(@\d+)?$/u)
       const rootNote = ma[1]
       const attrNote = ma[2]
+      const frets = ma[3]
       value = {
         rootNote: rootNote,
-        attrNote: attrNote !== undefined ? attrNote : ''
+        attrNote: attrNote !== undefined ? attrNote : '',
+        frets: frets !== undefined ? frets.slice(1) : ''
       }
     } else {
       value = m[0]
@@ -117,11 +119,13 @@ const transpose = function (tokens, key) {
       const index = pitchIndex[rootNote]
       if (index !== undefined) {
         const newIndex = (index + key + 12) % 12
+        const newFrets = index !== newIndex ? '' : token.value.frets
         newTokens.push({
           kind: token.kind,
           value: {
             rootNote: pitches[newIndex],
-            attrNote: token.value.attrNote
+            attrNote: token.value.attrNote,
+            frets: newFrets
           },
           index: token.index
         })
@@ -170,12 +174,35 @@ const convertChart = function (tokens, chords) {
           index: token.index
         })
       } else {
-        const pos = chords[rootNote][attrNote].positions['0']
+        const positions = chords[rootNote][attrNote].positions
+        let curPos
+        if (token.value.frets !== '') {
+          const frets = Array.prototype.map.call(
+            token.value.frets, c => parseInt(c))
+          const max = Math.max(...frets)
+          const baseFret = max < 5 ? 1 : max - 3
+          curPos = {
+            frets: {
+              0: ((frets[3] === undefined) ? 0 : frets[3]) - baseFret + 1,
+              1: ((frets[2] === undefined) ? 0 : frets[2]) - baseFret + 1,
+              2: ((frets[1] === undefined) ? 0 : frets[1]) - baseFret + 1,
+              3: ((frets[0] === undefined) ? 0 : frets[0]) - baseFret + 1
+            },
+            fingers: {
+              0: 0,
+              1: 0,
+              2: 0,
+              3: 0
+            },
+            baseFret: baseFret
+          }
+        } else {
+          curPos = positions[0]
+        }
         const value = {
           name: token.value.rootNote + token.value.attrNote,
-          frets: pos.frets,
-          fingers: pos.fingers,
-          baseFret: pos.baseFret
+          curPos: curPos,
+          positions: positions
         }
         charts.push({
           kind: token.kind,
@@ -196,6 +223,9 @@ const rebuildingText = function (tokens) {
     if (token.kind === 'chord') {
       const value = token.value
       text += value.rootNote + value.attrNote
+      if (value.frets !== '') {
+        text += '@' + value.frets
+      }
     } else {
       text += token.value
     }
