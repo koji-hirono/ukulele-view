@@ -233,6 +233,14 @@ const rebuildingText = function (tokens) {
   return text
 }
 
+const convertTextFrets = function (frets, baseFret) {
+  return '' +
+    (frets[3] + baseFret - 1) +
+    (frets[2] + baseFret - 1) +
+    (frets[1] + baseFret - 1) +
+    (frets[0] + baseFret - 1)
+}
+
 export default new Vuex.Store({
   state: {
     key: 0,
@@ -284,6 +292,13 @@ export default new Vuex.Store({
     },
     parse (context, text) {
       context.state.tokens = tokenize(text)
+    },
+    setChartPos (context, { index, pos }) {
+      context.state.tokens.forEach(e => {
+        if (e.index == index) {
+          e.value.frets = convertTextFrets(pos.frets, pos.baseFret)
+        }
+      })
     }
   },
   modules: {

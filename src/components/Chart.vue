@@ -1,14 +1,14 @@
 <template>
   <div class="container">
-    <span v-for="chart in charts" v-bind:key="chart">
+    <span v-for="chart in charts" v-bind:key="chart.index">
       <span v-if="chart.kind === 'chord'">
-        <a href="#" @click.prevent="selectChord(chart.value)">
-          <ChordDiagram
+        <a href="#" @click.prevent="selectChart(chart)">
+          <chord-diagram
             v-bind:name="chart.value.name"
             v-bind:frets="chart.value.curPos.frets"
             v-bind:fingers="chart.value.curPos.fingers"
             v-bind:baseFret="chart.value.curPos.baseFret"
-          ></ChordDiagram>
+          ></chord-diagram>
         </a>
       </span>
       <span v-else-if="chart.kind === 'word'">{{chart.value | escapeChar}}</span>
@@ -19,16 +19,16 @@
     <modal v-if="showModal" @close="showModal = false">
       <h3 slot="header">Select Chord</h3>
       <div slot="body">
-        <div v-for="(pos, i) in selectedChord.positions" :key="pos">
+        <div v-for="(pos, i) in selectedPositions" :key="i">
           <input type="radio" :id="i" :value="pos"
-             v-model="selectedChord.curPos">
+             :checked="isChecked(pos)" @change="selectPos(pos)">
           <label :for="i">
-            <ChordDiagram
-              v-bind:name="selectedChord.name"
+            <chord-diagram
+              v-bind:name="selectedChart.value.name"
               v-bind:frets="pos.frets"
               v-bind:fingers="pos.fingers"
               v-bind:baseFret="pos.baseFret"
-            ></ChordDiagram>
+            ></chord-diagram>
           </label>
         </div>
       </div>
@@ -40,14 +40,12 @@
 import ChordDiagram from '@/components/ChordDiagram'
 import Modal from '@/components/Modal'
 
-// select した後、$store.tokensに反映する処理が必要
-// charts はgetterなので、上書きしても反映されない。
 export default {
   name: 'Chart',
   data () {
     return {
       showModal: false,
-      selectedChord: null
+      selectedChart: null
     }
   },
   components: {
@@ -57,6 +55,9 @@ export default {
   computed: {
     charts () {
       return this.$store.getters.charts
+    },
+    selectedPositions () {
+      return this.selectedChart.value.positions
     }
   },
   filters: {
@@ -65,9 +66,35 @@ export default {
     }
   },
   methods: {
-    selectChord (chord) {
-      this.selectedChord = chord
+    selectChart (chart) {
+      this.selectedChart = chart
       this.showModal = true
+    },
+    selectPos (pos) {
+      this.$store.dispatch('setChartPos', {
+        index: this.selectedChart.index,
+        pos: pos
+      })
+      this.selectedChart.value.curPos = pos
+    },
+    isChecked (pos) {
+      const curPos = this.selectedChart.value.curPos
+      if (curPos.baseFret !== pos.baseFret) {
+        return false
+      }
+      if (curPos.frets[0] !== pos.frets[0]) {
+        return false
+      }
+      if (curPos.frets[1] !== pos.frets[1]) {
+        return false
+      }
+      if (curPos.frets[2] !== pos.frets[2]) {
+        return false
+      }
+      if (curPos.frets[3] !== pos.frets[3]) {
+        return false
+      }
+      return true
     }
   }
 }
