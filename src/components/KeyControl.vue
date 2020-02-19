@@ -7,11 +7,21 @@
     </div>
     <div>
       <span v-for="k in keyRange" v-bind:key="k">
-        <span v-if="k == key" class="active">
-          ●
+        <span v-if="k == key">
+          <span v-if="k == 0" class="zero">
+            ●
+          </span>
+          <span v-else class="active">
+            ●
+          </span>
         </span>
-        <span v-else class="notactive">
-          ○
+        <span v-else>
+          <span v-if="k == 0" class="zero">
+            ○
+          </span>
+          <span v-else class="notactive">
+            ○
+          </span>
         </span>
       </span>
     </div>
@@ -73,5 +83,8 @@ button:active {
 }
 .notactive {
   color: #ccc;
+}
+.zero {
+  color: #338;
 }
 </style>
