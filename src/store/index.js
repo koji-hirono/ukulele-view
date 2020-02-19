@@ -295,7 +295,7 @@ export default new Vuex.Store({
     },
     setChartPos (context, { index, pos }) {
       context.state.tokens.forEach(e => {
-        if (e.index == index) {
+        if (e.index === index) {
           e.value.frets = convertTextFrets(pos.frets, pos.baseFret)
         }
       })
