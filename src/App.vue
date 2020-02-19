@@ -1,8 +1,8 @@
 <template>
   <div id="app">
-    <KeyControl></KeyControl>
-    <ChartForm></ChartForm>
-    <Chart></Chart>
+    <key-control></key-control>
+    <chart-form></chart-form>
+    <chart></chart>
   </div>
 </template>
 

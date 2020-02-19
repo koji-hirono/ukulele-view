@@ -1,12 +1,12 @@
 <template>
   <div class="container">
     <div>
-      <button type="button" v-on:click="key_down">&#x266D;</button>
-      <button type="button" v-on:click="key_reset">&#x266E;</button>
-      <button type="button" v-on:click="key_up">&#x266F;</button>
+      <button type="button" @click="key_down">&#x266D;</button>
+      <button type="button" @click="key_reset">&#x266E;</button>
+      <button type="button" @click="key_up">&#x266F;</button>
     </div>
     <div>
-      <span v-for="k in keyRange" v-bind:key="k">
+      <span v-for="k in keyRange" :key="k">
         <span v-if="k == key">
           <span v-if="k == 0" class="zero">
             ●

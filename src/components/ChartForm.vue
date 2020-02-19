@@ -1,8 +1,8 @@
 <template>
   <div>
-    <textarea v-bind:value="text" v-on:input="inputText" cols="50" rows="10"></textarea>
+    <textarea :value="text" @input="inputText" cols="50" rows="10"></textarea>
     <ul v-if="errors.length != 0">
-      <li class="error" v-for="error in errors" v-bind:key="error">{{ error }}</li>
+      <li class="error" v-for="error in errors" :key="error">{{ error }}</li>
     </ul>
   </div>
 </template>

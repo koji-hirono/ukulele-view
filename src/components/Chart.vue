@@ -1,13 +1,13 @@
 <template>
   <div class="container">
-    <span v-for="chart in charts" v-bind:key="chart.index">
+    <span v-for="chart in charts" :key="chart.index">
       <span v-if="chart.kind === 'chord'">
         <a href="#" @click.prevent="selectChart(chart)">
           <chord-diagram
-            v-bind:name="chart.value.name"
-            v-bind:frets="chart.value.curPos.frets"
-            v-bind:fingers="chart.value.curPos.fingers"
-            v-bind:baseFret="chart.value.curPos.baseFret"
+            :name="chart.value.name"
+            :frets="chart.value.curPos.frets"
+            :fingers="chart.value.curPos.fingers"
+            :baseFret="chart.value.curPos.baseFret"
           ></chord-diagram>
         </a>
       </span>
@@ -24,10 +24,10 @@
              :checked="isChecked(pos)" @change="selectPos(pos)">
           <label :for="i">
             <chord-diagram
-              v-bind:name="selectedChart.value.name"
-              v-bind:frets="pos.frets"
-              v-bind:fingers="pos.fingers"
-              v-bind:baseFret="pos.baseFret"
+              :name="selectedChart.value.name"
+              :frets="pos.frets"
+              :fingers="pos.fingers"
+              :baseFret="pos.baseFret"
             ></chord-diagram>
           </label>
         </div>
