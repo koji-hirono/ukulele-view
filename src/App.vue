@@ -2,21 +2,21 @@
   <div id="app">
     <key-control></key-control>
     <chart-form></chart-form>
-    <chart></chart>
+    <chart-view></chart-view>
   </div>
 </template>
 
 <script>
 import KeyControl from '@/components/KeyControl'
 import ChartForm from '@/components/ChartForm'
-import Chart from '@/components/Chart'
+import ChartView from '@/components/ChartView'
 
 export default {
   name: 'Ukulele Chart',
   components: {
     KeyControl,
     ChartForm,
-    Chart
+    ChartView
   }
 }
 </script>

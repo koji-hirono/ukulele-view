@@ -16,7 +16,7 @@
       </span>
       <br v-else-if="chart.kind === 'newline'">
     </span>
-    <modal v-if="showModal" @close="showModal = false">
+    <base-modal v-if="showModal" @close="showModal = false">
       <h3 slot="header">Select Chord</h3>
       <div slot="body">
         <div v-for="(pos, i) in selectedPositions" :key="i">
@@ -32,16 +32,16 @@
           </label>
         </div>
       </div>
-    </modal>
+    </base-modal>
   </div>
 </template>
 
 <script>
 import ChordDiagram from '@/components/ChordDiagram'
-import Modal from '@/components/Modal'
+import BaseModal from '@/components/BaseModal'
 
 export default {
-  name: 'Chart',
+  name: 'ChartView',
   data () {
     return {
       showModal: false,
@@ -50,7 +50,7 @@ export default {
   },
   components: {
     ChordDiagram,
-    Modal
+    BaseModal
   },
   computed: {
     charts () {
