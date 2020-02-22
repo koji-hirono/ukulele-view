@@ -33,9 +33,12 @@ export default {
   font-family: Meiryo, sans-serif;
 }
 #edit {
-  padding: 0 3px;
+  margin: 0 0;
+  padding: 0 1em;
 }
 #chart {
+  margin: 0 0;
+  padding: 0.5em 1em;
   flex-grow: 1;
   background-color: #ffc;
 }
