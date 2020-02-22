@@ -146,9 +146,9 @@ const validate = function (tokens, chords) {
       const rootNote = normalizeRoot(token.value.rootNote)
       const attrNote = normalizeAttr(token.value.attrNote)
       if (!(rootNote in chords)) {
-        errors.push('Unkown root note: ' + rootNote)
+        errors.push('Unknown root note: ' + rootNote)
       } else if (!(attrNote in chords[rootNote])) {
-        errors.push('Unkown chord: ' + token.value.rootNote + token.value.attrNote)
+        errors.push('Unknown chord: ' + token.value.rootNote + token.value.attrNote)
       }
     }
   }
