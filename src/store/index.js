@@ -250,19 +250,19 @@ export default new Vuex.Store({
     tokens: []
   },
   mutations: {
-    key_up (state) {
+    keyUp (state) {
       if (state.key < state.keyMax) {
         state.tokens = transpose(state.tokens, 1)
         state.key++
       }
     },
-    key_down (state) {
+    keyDown (state) {
       if (state.key > state.keyMin) {
         state.tokens = transpose(state.tokens, -1)
         state.key--
       }
     },
-    key_reset (state) {
+    keyReset (state) {
       if (state.key !== 0) {
         state.tokens = transpose(state.tokens, 0 - state.key)
         state.key = 0
@@ -281,14 +281,14 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    key_up (context) {
-      context.commit('key_up')
+    keyUp (context) {
+      context.commit('keyUp')
     },
-    key_down (context) {
-      context.commit('key_down')
+    keyDown (context) {
+      context.commit('keyDown')
     },
-    key_reset (context) {
-      context.commit('key_reset')
+    keyReset (context) {
+      context.commit('keyReset')
     },
     parse (context, text) {
       context.state.tokens = tokenize(text)

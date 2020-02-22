@@ -1,14 +1,13 @@
 <template>
   <div>
-    <textarea :value="text" @input="inputText" cols="50" rows="10"></textarea>
+    <textarea cols="50" rows="10" :value="text" @input="inputText"></textarea>
     <ul v-if="errors.length != 0">
-      <li class="error" v-for="error in errors" :key="error">{{ error }}</li>
+      <li v-for="error in errors" :key="error" class="error">{{ error }}</li>
     </ul>
   </div>
 </template>
 
 <script>
-
 export default {
   name: 'ChartForm',
   computed: {

@@ -12,7 +12,7 @@
         </a>
       </span>
       <span v-else-if="chart.kind === 'word'">{{chart.value | escapeChar}}</span>
-      <span class="space" v-else-if="chart.kind === 'space'" v-text="chart.value">
+      <span v-else-if="chart.kind === 'space'" class="space" v-text="chart.value">
       </span>
       <br v-else-if="chart.kind === 'newline'">
     </span>
@@ -20,14 +20,17 @@
       <h3 slot="header">Select Chord</h3>
       <div slot="body">
         <div v-for="(pos, i) in selectedPositions" :key="i">
-          <input type="radio" :id="i" :value="pos"
-             :checked="isChecked(pos)" @change="selectPos(pos)">
-          <label :for="i">
+          <label>
+            <input type="radio" :value="pos"
+              :checked="isChecked(pos)"
+              class="selectpos"
+              @change="selectPos(pos)">
             <chord-diagram
               :name="selectedChart.value.name"
               :frets="pos.frets"
               :fingers="pos.fingers"
               :baseFret="pos.baseFret"
+              class="selectpos"
             ></chord-diagram>
           </label>
         </div>
@@ -106,7 +109,7 @@ export default {
 .space {
   white-space: pre;
 }
-label {
+.selectpos {
   vertical-align: middle;
 }
 </style>

@@ -1,28 +1,13 @@
 <template>
   <div class="container">
     <div>
-      <button type="button" @click="key_down">&#x266D;</button>
-      <button type="button" @click="key_reset">&#x266E;</button>
-      <button type="button" @click="key_up">&#x266F;</button>
+      <button type="button" @click="keyDown">&#x266D;</button>
+      <button type="button" @click="keyReset">&#x266E;</button>
+      <button type="button" @click="keyUp">&#x266F;</button>
     </div>
     <div>
-      <span v-for="k in keyRange" :key="k">
-        <span v-if="k == key">
-          <span v-if="k == 0" class="zero">
-            ●
-          </span>
-          <span v-else class="active">
-            ●
-          </span>
-        </span>
-        <span v-else>
-          <span v-if="k == 0" class="zero">
-            ○
-          </span>
-          <span v-else class="notactive">
-            ○
-          </span>
-        </span>
+      <span v-for="key in keyRange" :key="key" :class="keyClass(key)">
+        {{ keyIcon(key) }}
       </span>
     </div>
   </div>
@@ -32,7 +17,7 @@
 export default {
   name: 'KeyControl',
   computed: {
-    key () {
+    keyCurrent () {
       return this.$store.state.key
     },
     keyRange () {
@@ -44,14 +29,30 @@ export default {
     }
   },
   methods: {
-    key_down () {
-      this.$store.dispatch('key_down')
+    keyDown () {
+      this.$store.dispatch('keyDown')
     },
-    key_up () {
-      this.$store.dispatch('key_up')
+    keyUp () {
+      this.$store.dispatch('keyUp')
     },
-    key_reset () {
-      this.$store.dispatch('key_reset')
+    keyReset () {
+      this.$store.dispatch('keyReset')
+    },
+    keyIcon (key) {
+      if (key === this.keyCurrent) {
+        return '●'
+      } else {
+        return '○'
+      }
+    },
+    keyClass (key) {
+      if (key === 0) {
+        return 'zero'
+      } else if (key === this.keyCurrent) {
+        return 'active'
+      } else {
+        return 'notactive'
+      }
     }
   }
 }

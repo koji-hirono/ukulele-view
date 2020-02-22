@@ -5,13 +5,13 @@
 
     <g transform="translate(0,18)">
       <!-- open string -->
-      <circle v-show="openStringVisible[3]"
+      <circle v-if="openStringVisible[3]"
           cx="3" cy="0" r="2" fill="#fff" stroke="#000"/>
-      <circle v-show="openStringVisible[2]"
+      <circle v-if="openStringVisible[2]"
           cx="3" cy="10" r="2" fill="#fff" stroke="#000"/>
-      <circle v-show="openStringVisible[1]"
+      <circle v-if="openStringVisible[1]"
           cx="3" cy="20" r="2" fill="#fff" stroke="#000"/>
-      <circle v-show="openStringVisible[0]"
+      <circle v-if="openStringVisible[0]"
           cx="3" cy="30" r="2" fill="#fff" stroke="#000"/>
       <!-- frame -->
       <g transform="translate(8, 0)">
@@ -22,7 +22,7 @@
         <line x1="0" y1="30" x2="70" y2="30" stroke="#000"/>
         <!-- fret -->
         <!-- 0 -->
-        <line v-show="!baseFretVisible" x1="0" y1="0" x2="0" y2="30"
+        <line v-if="!baseFretVisible" x1="0" y1="0" x2="0" y2="30"
             stroke="#888"/>
         <g transform="translate(3, 0)">
           <line x1="0" y1="0" x2="0" y2="30" stroke="#888"/>
@@ -32,18 +32,18 @@
           <line x1="56" y1="0" x2="56" y2="30" stroke="#888"/>
 
           <!-- base fret -->
-          <text v-show="baseFretVisible" x="7" y="40"
+          <text v-if="baseFretVisible" x="7" y="40"
               text-anchor="middle" font-size="9">{{ baseFret }}</text>
 
           <!-- close string -->
-          <circle v-show="closedStringVisible[3]"
-              :cx="fret_x[3]" cy="0" r="3" fill="#000"/>
-          <circle v-show="closedStringVisible[2]"
-              :cx="fret_x[2]" cy="10" r="3" fill="#000"/>
-          <circle v-show="closedStringVisible[1]"
-              :cx="fret_x[1]" cy="20" r="3" fill="#000"/>
-          <circle v-show="closedStringVisible[0]"
-              :cx="fret_x[0]" cy="30" r="3" fill="#000"/>
+          <circle v-if="closedStringVisible[3]"
+              :cx="fretX[3]" cy="0" r="3" fill="#000"/>
+          <circle v-if="closedStringVisible[2]"
+              :cx="fretX[2]" cy="10" r="3" fill="#000"/>
+          <circle v-if="closedStringVisible[1]"
+              :cx="fretX[1]" cy="20" r="3" fill="#000"/>
+          <circle v-if="closedStringVisible[0]"
+              :cx="fretX[0]" cy="30" r="3" fill="#000"/>
         </g>
       </g>
     </g>
@@ -77,7 +77,7 @@ export default {
     baseFretVisible () {
       return this.baseFret !== 1
     },
-    fret_x () {
+    fretX () {
       const a = {}
       for (const k in this.frets) {
         a[k] = (this.frets[k] - 1) * 14 + 7
