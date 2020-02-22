@@ -1,13 +1,22 @@
 <template>
   <div class="container">
-    <div>
-      <button type="button" @click="keyDown">&#x266D;</button>
-      <button type="button" @click="keyReset">&#x266E;</button>
-      <button type="button" @click="keyUp">&#x266F;</button>
+    <div class="control-bar">
+      <div>
+        <button type="button" class="control-button"
+          @click="keyDown">&#x266D;</button>
+      </div>
+      <div>
+        <button type="button" class="control-button"
+          @click="keyReset">&#x266E;</button>
+      </div>
+      <div>
+        <button type="button" class="control-button"
+          @click="keyUp">&#x266F;</button>
+      </div>
     </div>
     <div>
-      <span v-for="key in keyRange" :key="key" :class="keyClass(key)">
-        {{ keyIcon(key) }}
+      <span v-for="key in keyRange" :key="key" :class="keyClass(key)" class="meter">
+        ●
       </span>
     </div>
   </div>
@@ -38,13 +47,6 @@ export default {
     keyReset () {
       this.$store.dispatch('keyReset')
     },
-    keyIcon (key) {
-      if (key === this.keyCurrent) {
-        return '●'
-      } else {
-        return '○'
-      }
-    },
     keyClass (key) {
       if (key === 0) {
         return 'zero'
@@ -60,24 +62,34 @@ export default {
 
 <style scoped>
 .container {
-  margin: 0.5em;
-  padding: 0.5em;
+  margin: 0.5em 0;
+  padding: 0.5em 0;
+  display: flex;
+  width: max-content;
+  flex-direction: column;
 }
-button {
-  margin: 0.5em 0.5em 0.5em 0.5em;
+.control-bar {
+  margin: 0.5em 0;
+  display: flex;
+  justify-content: space-between;
+}
+.control-button {
   width: 2em;
   height: 2em;
-  font-size: 16pt;
+  font-size: 14pt;
+  font-family: Helvetica, Arial, sans-serif;
   text-align: center;
   border-radius: 50%;
-  border: none;
-  background-color: #ccc;
-  color: #000;
+  border-style: none;
+  filter: drop-shadow(4px 4px 4px rgba(0, 0, 0, 0.4));
+  background-color: #333;
+  color: #fff;
 }
-button:active {
-  -webkit-transform: translateY(4px);
+.control-button:active {
   transform: translateY(4px);
-  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.2);
+  filter: none;
+}
+.meter {
 }
 .active {
   color: #c33;
@@ -86,6 +98,6 @@ button:active {
   color: #ccc;
 }
 .zero {
-  color: #338;
+  color: #3cf;
 }
 </style>
