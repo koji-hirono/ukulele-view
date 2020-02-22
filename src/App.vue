@@ -1,8 +1,12 @@
 <template>
   <div id="app">
-    <key-control></key-control>
-    <chart-form></chart-form>
-    <chart-view></chart-view>
+    <div id="edit">
+      <key-control></key-control>
+      <chart-form></chart-form>
+    </div>
+    <div id="chart">
+      <chart-view></chart-view>
+    </div>
   </div>
 </template>
 
@@ -23,5 +27,16 @@ export default {
 
 <style>
 #app {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  font-family: Meiryo, sans-serif;
+}
+#edit {
+  padding: 0 3px;
+}
+#chart {
+  flex-grow: 1;
+  background-color: #ffc;
 }
 </style>

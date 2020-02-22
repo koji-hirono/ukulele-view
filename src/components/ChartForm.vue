@@ -1,6 +1,6 @@
 <template>
   <div>
-    <textarea cols="50" rows="10" :value="text" @input="inputText"></textarea>
+    <textarea class="edit" :value="text" @input="inputText"></textarea>
     <ul v-if="errors.length != 0">
       <li v-for="error in errors" :key="error" class="error">{{ error }}</li>
     </ul>
@@ -27,9 +27,11 @@ export default {
 </script>
 
 <style scoped>
-textarea {
+.edit {
+  width: 30em;
+  height: 70vh;
   font-family: monospace;
-  font-size: 1.5em;
+  font-size: 11pt;
   white-space: pre;
 }
 .error {
