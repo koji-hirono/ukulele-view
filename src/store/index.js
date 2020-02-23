@@ -206,13 +206,22 @@ const convertChart = function (tokens, chords) {
   return charts
 }
 
-const rebuildingText = function (tokens) {
+const isDefaultPosition = function (value, chords) {
+  const rootNote = normalizeRoot(value.rootNote)
+  const attrNote = normalizeAttr(value.attrNote)
+  const name = rootNote + attrNote
+  const pos0 = chords[name][0]
+  const pos0Frets = pos0.frets.map(e => String(e + pos0.baseFret - 1)).join('')
+  return value.frets === pos0Frets
+}
+
+const rebuildingText = function (tokens, chords) {
   let text = ''
   for (const token of tokens) {
     if (token.kind === 'chord') {
       const value = token.value
       text += value.rootNote + value.attrNote
-      if (value.frets !== '') {
+      if (value.frets !== '' && !isDefaultPosition(value, chords)) {
         text += '@' + value.frets
       }
     } else {
@@ -262,7 +271,7 @@ export default new Vuex.Store({
       return convertChart(state.tokens, state.chords)
     },
     text (state) {
-      return rebuildingText(state.tokens)
+      return rebuildingText(state.tokens, state.chords)
     }
   },
   actions: {

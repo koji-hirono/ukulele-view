@@ -16,7 +16,7 @@
       <br v-else-if="chart.kind === 'newline'">
     </span>
     <base-modal v-if="showModal" @close="showModal = false">
-      <h3 slot="header">Select Chord</h3>
+      <h3 slot="header">Select position</h3>
       <div slot="body">
         <div v-for="(pos, i) in selectedPositions" :key="i">
           <label>
