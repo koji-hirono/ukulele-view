@@ -6,7 +6,6 @@
           <chord-diagram
             :name="chart.value.name"
             :frets="chart.value.curPos.frets"
-            :fingers="chart.value.curPos.fingers"
             :baseFret="chart.value.curPos.baseFret"
           ></chord-diagram>
         </a>
@@ -28,7 +27,6 @@
             <chord-diagram
               :name="selectedChart.value.name"
               :frets="pos.frets"
-              :fingers="pos.fingers"
               :baseFret="pos.baseFret"
               class="selectpos"
             ></chord-diagram>

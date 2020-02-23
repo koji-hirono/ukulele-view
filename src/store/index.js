@@ -145,10 +145,9 @@ const validate = function (tokens, chords) {
     if (token.kind === 'chord') {
       const rootNote = normalizeRoot(token.value.rootNote)
       const attrNote = normalizeAttr(token.value.attrNote)
-      if (!(rootNote in chords)) {
-        errors.push('Unknown root note: ' + rootNote)
-      } else if (!(attrNote in chords[rootNote])) {
-        errors.push('Unknown chord: ' + token.value.rootNote + token.value.attrNote)
+      const name = rootNote + attrNote
+      if (!(name in chords)) {
+        errors.push('Unknown chord: ' + name)
       }
     }
   }
@@ -159,22 +158,18 @@ const convertChart = function (tokens, chords) {
   const charts = []
   for (const token of tokens) {
     if (token.kind === 'chord') {
+      const origName = token.value.rootNote + token.value.attrNote
       const rootNote = normalizeRoot(token.value.rootNote)
       const attrNote = normalizeAttr(token.value.attrNote)
-      if (!(rootNote in chords)) {
-        charts.push({
-          kind: 'error',
-          value: token.value,
-          index: token.index
-        })
-      } else if (!(attrNote in chords[rootNote])) {
+      const name = rootNote + attrNote
+      if (!(name in chords)) {
         charts.push({
           kind: 'error',
           value: token.value,
           index: token.index
         })
       } else {
-        const positions = chords[rootNote][attrNote].positions
+        const positions = chords[name]
         let curPos
         if (token.value.frets !== '') {
           const frets = Array.prototype.map.call(
@@ -182,25 +177,19 @@ const convertChart = function (tokens, chords) {
           const max = Math.max(...frets)
           const baseFret = max < 5 ? 1 : max - 3
           curPos = {
-            frets: {
-              0: ((frets[3] === undefined) ? 0 : frets[3]) - baseFret + 1,
-              1: ((frets[2] === undefined) ? 0 : frets[2]) - baseFret + 1,
-              2: ((frets[1] === undefined) ? 0 : frets[1]) - baseFret + 1,
-              3: ((frets[0] === undefined) ? 0 : frets[0]) - baseFret + 1
-            },
-            fingers: {
-              0: 0,
-              1: 0,
-              2: 0,
-              3: 0
-            },
+            frets: [
+              ((frets[0] === undefined) ? 0 : frets[0]) - baseFret + 1,
+              ((frets[1] === undefined) ? 0 : frets[1]) - baseFret + 1,
+              ((frets[2] === undefined) ? 0 : frets[2]) - baseFret + 1,
+              ((frets[3] === undefined) ? 0 : frets[3]) - baseFret + 1
+            ],
             baseFret: baseFret
           }
         } else {
           curPos = positions[0]
         }
         const value = {
-          name: token.value.rootNote + token.value.attrNote,
+          name: origName,
           curPos: curPos,
           positions: positions
         }
@@ -234,11 +223,7 @@ const rebuildingText = function (tokens) {
 }
 
 const convertTextFrets = function (frets, baseFret) {
-  return '' +
-    (frets[3] + baseFret - 1) +
-    (frets[2] + baseFret - 1) +
-    (frets[1] + baseFret - 1) +
-    (frets[0] + baseFret - 1)
+  return frets.map(e => String(e + baseFret - 1)).join('')
 }
 
 export default new Vuex.Store({

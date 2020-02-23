@@ -5,13 +5,13 @@
 
     <g transform="translate(0,18)">
       <!-- open string -->
-      <circle v-if="openStringVisible[3]"
-          cx="3" cy="0" r="2" fill="#fff" stroke="#000"/>
-      <circle v-if="openStringVisible[2]"
-          cx="3" cy="10" r="2" fill="#fff" stroke="#000"/>
-      <circle v-if="openStringVisible[1]"
-          cx="3" cy="20" r="2" fill="#fff" stroke="#000"/>
       <circle v-if="openStringVisible[0]"
+          cx="3" cy="0" r="2" fill="#fff" stroke="#000"/>
+      <circle v-if="openStringVisible[1]"
+          cx="3" cy="10" r="2" fill="#fff" stroke="#000"/>
+      <circle v-if="openStringVisible[2]"
+          cx="3" cy="20" r="2" fill="#fff" stroke="#000"/>
+      <circle v-if="openStringVisible[3]"
           cx="3" cy="30" r="2" fill="#fff" stroke="#000"/>
       <!-- frame -->
       <g transform="translate(8, 0)">
@@ -36,14 +36,14 @@
               text-anchor="middle" font-size="9">{{ baseFret }}</text>
 
           <!-- close string -->
-          <circle v-if="closedStringVisible[3]"
-              :cx="fretX[3]" cy="0" r="3" fill="#000"/>
-          <circle v-if="closedStringVisible[2]"
-              :cx="fretX[2]" cy="10" r="3" fill="#000"/>
-          <circle v-if="closedStringVisible[1]"
-              :cx="fretX[1]" cy="20" r="3" fill="#000"/>
           <circle v-if="closedStringVisible[0]"
-              :cx="fretX[0]" cy="30" r="3" fill="#000"/>
+              :cx="fretX[0]" cy="0" r="3" fill="#000"/>
+          <circle v-if="closedStringVisible[1]"
+              :cx="fretX[1]" cy="10" r="3" fill="#000"/>
+          <circle v-if="closedStringVisible[2]"
+              :cx="fretX[2]" cy="20" r="3" fill="#000"/>
+          <circle v-if="closedStringVisible[3]"
+              :cx="fretX[3]" cy="30" r="3" fill="#000"/>
         </g>
       </g>
     </g>
@@ -55,34 +55,21 @@ export default {
   name: 'ChordDiagram',
   props: {
     name: String,
-    frets: Object,
-    fingers: Object,
+    frets: Array,
     baseFret: Number
   },
   computed: {
     closedStringVisible () {
-      const a = {}
-      for (const k in this.frets) {
-        a[k] = this.frets[k] > 0
-      }
-      return a
+      return this.frets.map(e => e > 0)
     },
     openStringVisible () {
-      const a = {}
-      for (const k in this.frets) {
-        a[k] = this.frets[k] === 0
-      }
-      return a
+      return this.frets.map(e => e === 0)
     },
     baseFretVisible () {
       return this.baseFret !== 1
     },
     fretX () {
-      const a = {}
-      for (const k in this.frets) {
-        a[k] = (this.frets[k] - 1) * 14 + 7
-      }
-      return a
+      return this.frets.map(e => (e - 1) * 14 + 7)
     }
   }
 }
