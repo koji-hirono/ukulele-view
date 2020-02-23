@@ -1,5 +1,5 @@
 <template>
-  <svg width="80" height="60" viewBox="0 0 80 60">
+  <svg width="70" height="60" viewBox="0 0 70 60">
     <!-- chord name -->
     <text x="0" y="11" font-size="10">{{ name }}</text>
 
@@ -16,10 +16,10 @@
       <!-- frame -->
       <g transform="translate(8, 0)">
         <!-- string -->
-        <line x1="0" y1="0" x2="70" y2="0" stroke="#000"/>
-        <line x1="0" y1="10" x2="70" y2="10" stroke="#000"/>
-        <line x1="0" y1="20" x2="70" y2="20" stroke="#000"/>
-        <line x1="0" y1="30" x2="70" y2="30" stroke="#000"/>
+        <line x1="0" y1="0" x2="60" y2="0" stroke="#000"/>
+        <line x1="0" y1="10" x2="60" y2="10" stroke="#000"/>
+        <line x1="0" y1="20" x2="60" y2="20" stroke="#000"/>
+        <line x1="0" y1="30" x2="60" y2="30" stroke="#000"/>
         <!-- fret -->
         <!-- 0 -->
         <line v-if="!baseFretVisible" x1="0" y1="0" x2="0" y2="30"
