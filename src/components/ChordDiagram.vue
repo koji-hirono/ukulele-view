@@ -20,11 +20,11 @@
         <line x1="0" y1="10" x2="60" y2="10" stroke="#000"/>
         <line x1="0" y1="20" x2="60" y2="20" stroke="#000"/>
         <line x1="0" y1="30" x2="60" y2="30" stroke="#000"/>
-        <!-- fret -->
-        <!-- 0 -->
+        <!-- nut -->
         <line v-if="!baseFretVisible" x1="0" y1="0" x2="0" y2="30"
             stroke="#888"/>
         <g transform="translate(3, 0)">
+          <!-- fret -->
           <line x1="0" y1="0" x2="0" y2="30" stroke="#888"/>
           <line x1="14" y1="0" x2="14" y2="30" stroke="#888"/>
           <line x1="28" y1="0" x2="28" y2="30" stroke="#888"/>

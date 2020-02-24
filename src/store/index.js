@@ -154,6 +154,26 @@ const validate = function (tokens, chords) {
   return errors
 }
 
+const findPosition = function (positions, frets) {
+  for (const pos of positions) {
+    if (pos.frets.length !== frets.length) {
+      return null
+    }
+    const f = pos.frets.map(e => e + pos.baseFret - 1)
+    let found = true
+    for (let i = 0; i < f.length; i++) {
+      if (f[i] !== frets[i]) {
+        found = false
+        break
+      }
+    }
+    if (found) {
+      return pos
+    }
+  }
+  return null
+}
+
 const convertChart = function (tokens, chords) {
   const charts = []
   for (const token of tokens) {
@@ -174,16 +194,19 @@ const convertChart = function (tokens, chords) {
         if (token.value.frets !== '') {
           const frets = Array.prototype.map.call(
             token.value.frets, c => parseInt(c))
-          const max = Math.max(...frets)
-          const baseFret = max < 5 ? 1 : max - 3
-          curPos = {
-            frets: [
-              ((frets[0] === undefined) ? 0 : frets[0]) - baseFret + 1,
-              ((frets[1] === undefined) ? 0 : frets[1]) - baseFret + 1,
-              ((frets[2] === undefined) ? 0 : frets[2]) - baseFret + 1,
-              ((frets[3] === undefined) ? 0 : frets[3]) - baseFret + 1
-            ],
-            baseFret: baseFret
+          curPos = findPosition(positions, frets)
+          if (!curPos) {
+            const max = Math.max(...frets)
+            const baseFret = max < 5 ? 1 : max - 3
+            curPos = {
+              frets: [
+                ((frets[0] === undefined) ? 0 : frets[0]) - baseFret + 1,
+                ((frets[1] === undefined) ? 0 : frets[1]) - baseFret + 1,
+                ((frets[2] === undefined) ? 0 : frets[2]) - baseFret + 1,
+                ((frets[3] === undefined) ? 0 : frets[3]) - baseFret + 1
+              ],
+              baseFret: baseFret
+            }
           }
         } else {
           curPos = positions[0]
