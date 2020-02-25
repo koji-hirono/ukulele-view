@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import chords from '@/assets/ukulele_chords.json'
 import parser from '@/lib/parser.js'
 
 Vue.use(Vuex)
@@ -10,7 +9,6 @@ export default new Vuex.Store({
     key: 0,
     keyMin: -6,
     keyMax: 6,
-    chords: chords,
     tokens: []
   },
   mutations: {
@@ -35,13 +33,13 @@ export default new Vuex.Store({
   },
   getters: {
     errors (state) {
-      return parser.validate(state.tokens, state.chords)
+      return parser.validate(state.tokens)
     },
     charts (state) {
-      return parser.convertChart(state.tokens, state.chords)
+      return parser.convertChart(state.tokens)
     },
     text (state) {
-      return parser.rebuildingText(state.tokens, state.chords)
+      return parser.rebuildingText(state.tokens)
     }
   },
   actions: {

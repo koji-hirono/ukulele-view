@@ -1,4 +1,4 @@
-// import chords from '@/assets/ukulele_chords.json'
+import chordTable from '@/assets/ukulele_chords.json'
 
 const normalizeRoot = function (note) {
   switch (note) {
@@ -135,14 +135,14 @@ const transpose = function (tokens, key) {
   return newTokens
 }
 
-const validate = function (tokens, chords) {
+const validate = function (tokens) {
   const errors = []
   for (const token of tokens) {
     if (token.kind === 'chord') {
       const rootNote = normalizeRoot(token.value.rootNote)
       const attrNote = normalizeAttr(token.value.attrNote)
       const name = rootNote + attrNote
-      if (!(name in chords)) {
+      if (!(name in chordTable)) {
         errors.push('Unknown chord: ' + name)
       }
     }
@@ -170,7 +170,7 @@ const findPosition = function (positions, frets) {
   return null
 }
 
-const convertChart = function (tokens, chords) {
+const convertChart = function (tokens) {
   const charts = []
   for (const token of tokens) {
     if (token.kind === 'chord') {
@@ -178,14 +178,14 @@ const convertChart = function (tokens, chords) {
       const rootNote = normalizeRoot(token.value.rootNote)
       const attrNote = normalizeAttr(token.value.attrNote)
       const name = rootNote + attrNote
-      if (!(name in chords)) {
+      if (!(name in chordTable)) {
         charts.push({
           kind: 'error',
           value: token.value,
           index: token.index
         })
       } else {
-        const positions = chords[name]
+        const positions = chordTable[name]
         let curPos
         if (token.value.frets !== '') {
           const frets = Array.prototype.map.call(
@@ -225,22 +225,22 @@ const convertChart = function (tokens, chords) {
   return charts
 }
 
-const isDefaultPosition = function (value, chords) {
+const isDefaultPosition = function (value) {
   const rootNote = normalizeRoot(value.rootNote)
   const attrNote = normalizeAttr(value.attrNote)
   const name = rootNote + attrNote
-  const pos0 = chords[name][0]
+  const pos0 = chordTable[name][0]
   const pos0Frets = pos0.frets.map(e => String(e + pos0.baseFret - 1)).join('')
   return value.frets === pos0Frets
 }
 
-const rebuildingText = function (tokens, chords) {
+const rebuildingText = function (tokens) {
   let text = ''
   for (const token of tokens) {
     if (token.kind === 'chord') {
       const value = token.value
       text += value.rootNote + value.attrNote
-      if (value.frets !== '' && !isDefaultPosition(value, chords)) {
+      if (value.frets !== '' && !isDefaultPosition(value)) {
         text += '@' + value.frets
       }
     } else {
