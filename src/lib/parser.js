@@ -116,12 +116,7 @@ const convertChart = function (tokens) {
             const max = Math.max(...frets)
             const baseFret = max < 5 ? 1 : max - 3
             curPos = {
-              frets: [
-                ((frets[0] === undefined) ? 0 : frets[0]) - baseFret + 1,
-                ((frets[1] === undefined) ? 0 : frets[1]) - baseFret + 1,
-                ((frets[2] === undefined) ? 0 : frets[2]) - baseFret + 1,
-                ((frets[3] === undefined) ? 0 : frets[3]) - baseFret + 1
-              ],
+              frets: frets.map(e => e - baseFret + 1),
               baseFret: baseFret
             }
           }
@@ -146,34 +141,24 @@ const convertChart = function (tokens) {
   return charts
 }
 
-const isDefaultPosition = function (value) {
-  const positions = chord.findPositions(value.rootNote, value.attrNote)
-  if (!positions) {
-    return false
-  }
-  const pos0 = positions[0]
-  const frets = pos0.frets.map(e => String(e + pos0.baseFret - 1)).join('')
-  return value.frets === frets
+const convertTextFrets = function (frets, baseFret) {
+  return frets.map(e => String(e + baseFret - 1)).join('')
 }
 
-const rebuildingText = function (tokens) {
+const rebuildingText = function (charts) {
   let text = ''
-  for (const token of tokens) {
-    if (token.kind === 'chord') {
-      const value = token.value
-      text += value.rootNote + value.attrNote
-      if (value.frets !== '' && !isDefaultPosition(value)) {
-        text += '@' + value.frets
+  for (const chart of charts) {
+    if (chart.kind === 'chord') {
+      const value = chart.value
+      text += value.name
+      if (value.curPos !== value.positions[0]) {
+        text += '@' + convertTextFrets(value.curPos.frets, value.curPos.baseFret)
       }
     } else {
-      text += token.value
+      text += chart.value
     }
   }
   return text
-}
-
-const convertTextFrets = function (frets, baseFret) {
-  return frets.map(e => String(e + baseFret - 1)).join('')
 }
 
 export default {
@@ -181,6 +166,6 @@ export default {
   validate,
   transpose,
   convertChart,
-  rebuildingText,
-  convertTextFrets
+  convertTextFrets,
+  rebuildingText
 }

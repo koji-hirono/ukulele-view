@@ -38,8 +38,8 @@ export default new Vuex.Store({
     charts (state) {
       return parser.convertChart(state.tokens)
     },
-    text (state) {
-      return parser.rebuildingText(state.tokens)
+    text (state, getters) {
+      return parser.rebuildingText(getters.charts)
     }
   },
   actions: {
