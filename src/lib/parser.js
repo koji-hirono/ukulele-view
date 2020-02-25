@@ -1,56 +1,4 @@
-import chordTable from '@/assets/ukulele_chords.json'
-
-const normalizeRoot = function (note) {
-  switch (note) {
-    case 'Db':
-      return 'C#'
-    case 'Eb':
-      return 'D#'
-    case 'Gb':
-      return 'F#'
-    case 'Ab':
-      return 'G#'
-    case 'Bb':
-      return 'A#'
-    default:
-      return note
-  }
-}
-
-// '' empty string   major
-// m                 minor
-// 7                 7
-// M7                maj7
-// m7                m7
-// dim               dim
-// m7(b5)            m7b5
-// aug               aug
-// sus4              sus4
-// 6                 6
-// 7(9)              9
-// M7(9)             maj9
-// mM7               mmaj7
-// add9              add9
-const normalizeAttr = function (attr) {
-  switch (attr) {
-    case '':
-      return 'major'
-    case 'm':
-      return 'minor'
-    case 'M7':
-      return 'maj7'
-    case 'm7(b5)':
-      return 'm7b5'
-    case '7(9)':
-      return '9'
-    case 'M7(9)':
-      return 'maj9'
-    case 'mM7':
-      return 'mmaj7'
-    default:
-      return attr
-  }
-}
+import chord from '@/lib/chord.js'
 
 const tokenize = function (text) {
   const specs = [
@@ -88,40 +36,18 @@ const tokenize = function (text) {
   return tokens
 }
 
-const transpose = function (tokens, key) {
-  const pitches = [
-    'C', 'C#', 'D', 'D#',
-    'E', 'F', 'F#', 'G',
-    'G#', 'A', 'A#', 'B'
-  ]
-  const pitchIndex = {
-    C: 0,
-    'C#': 1,
-    D: 2,
-    'D#': 3,
-    E: 4,
-    F: 5,
-    'F#': 6,
-    G: 7,
-    'G#': 8,
-    A: 9,
-    'A#': 10,
-    B: 11
-  }
+const transpose = function (tokens, degree) {
   const newTokens = []
   for (const token of tokens) {
     if (token.kind === 'chord') {
-      const rootNote = normalizeRoot(token.value.rootNote)
-      const index = pitchIndex[rootNote]
-      if (index !== undefined) {
-        const newIndex = (index + key + 12) % 12
-        const newFrets = index !== newIndex ? '' : token.value.frets
+      const newRootNote = chord.transpose(token.value.rootNote, degree)
+      if (newRootNote !== token.value.rootNote) {
         newTokens.push({
           kind: token.kind,
           value: {
-            rootNote: pitches[newIndex],
+            rootNote: newRootNote,
             attrNote: token.value.attrNote,
-            frets: newFrets
+            frets: ''
           },
           index: token.index
         })
@@ -139,11 +65,8 @@ const validate = function (tokens) {
   const errors = []
   for (const token of tokens) {
     if (token.kind === 'chord') {
-      const rootNote = normalizeRoot(token.value.rootNote)
-      const attrNote = normalizeAttr(token.value.attrNote)
-      const name = rootNote + attrNote
-      if (!(name in chordTable)) {
-        errors.push('Unknown chord: ' + name)
+      if (!chord.findPositions(token.value.rootNote, token.value.attrNote)) {
+        errors.push('Unknown chord: ' + token.value.rootNote + token.value.attrNote)
       }
     }
   }
@@ -175,17 +98,15 @@ const convertChart = function (tokens) {
   for (const token of tokens) {
     if (token.kind === 'chord') {
       const origName = token.value.rootNote + token.value.attrNote
-      const rootNote = normalizeRoot(token.value.rootNote)
-      const attrNote = normalizeAttr(token.value.attrNote)
-      const name = rootNote + attrNote
-      if (!(name in chordTable)) {
+      const positions = chord.findPositions(token.value.rootNote,
+        token.value.attrNote)
+      if (!positions) {
         charts.push({
           kind: 'error',
           value: token.value,
           index: token.index
         })
       } else {
-        const positions = chordTable[name]
         let curPos
         if (token.value.frets !== '') {
           const frets = Array.prototype.map.call(
@@ -226,12 +147,13 @@ const convertChart = function (tokens) {
 }
 
 const isDefaultPosition = function (value) {
-  const rootNote = normalizeRoot(value.rootNote)
-  const attrNote = normalizeAttr(value.attrNote)
-  const name = rootNote + attrNote
-  const pos0 = chordTable[name][0]
-  const pos0Frets = pos0.frets.map(e => String(e + pos0.baseFret - 1)).join('')
-  return value.frets === pos0Frets
+  const positions = chord.findPositions(value.rootNote, value.attrNote)
+  if (!positions) {
+    return false
+  }
+  const pos0 = positions[0]
+  const frets = pos0.frets.map(e => String(e + pos0.baseFret - 1)).join('')
+  return value.frets === frets
 }
 
 const rebuildingText = function (tokens) {
