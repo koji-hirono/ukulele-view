@@ -36,43 +36,6 @@ const tokenize = function (text) {
   return tokens
 }
 
-const transpose = function (tokens, degree) {
-  const newTokens = []
-  for (const token of tokens) {
-    if (token.kind === 'chord') {
-      const newRootNote = chord.transpose(token.value.rootNote, degree)
-      if (newRootNote !== token.value.rootNote) {
-        newTokens.push({
-          kind: token.kind,
-          value: {
-            rootNote: newRootNote,
-            attrNote: token.value.attrNote,
-            frets: ''
-          },
-          index: token.index
-        })
-      } else {
-        newTokens.push(token)
-      }
-    } else {
-      newTokens.push(token)
-    }
-  }
-  return newTokens
-}
-
-const validate = function (tokens) {
-  const errors = []
-  for (const token of tokens) {
-    if (token.kind === 'chord') {
-      if (!chord.findPositions(token.value.rootNote, token.value.attrNote)) {
-        errors.push('Unknown chord: ' + token.value.rootNote + token.value.attrNote)
-      }
-    }
-  }
-  return errors
-}
-
 const findPosition = function (positions, frets) {
   for (const pos of positions) {
     if (pos.frets.length !== frets.length) {
@@ -101,9 +64,13 @@ const convertChart = function (tokens) {
       const positions = chord.findPositions(token.value.rootNote,
         token.value.attrNote)
       if (!positions) {
+        let value = token.value.rootNote + token.value.attrNote
+        if (token.value.frets !== '') {
+          value += '@' + token.value.frets
+        }
         charts.push({
           kind: 'error',
-          value: token.value,
+          value: value,
           index: token.index
         })
       } else {
@@ -125,6 +92,8 @@ const convertChart = function (tokens) {
         }
         const value = {
           name: origName,
+          rootNote: token.value.rootNote,
+          attrNote: token.value.attrNote,
           curPos: curPos,
           positions: positions
         }
@@ -139,6 +108,41 @@ const convertChart = function (tokens) {
     }
   }
   return charts
+}
+
+const parse = function (text) {
+  const tokens = tokenize(text)
+  return convertChart(tokens)
+}
+
+const transpose = function (charts, degree) {
+  const newCharts = []
+  for (const chart of charts) {
+    if (chart.kind === 'chord') {
+      const newRootNote = chord.transpose(chart.value.rootNote, degree)
+      if (newRootNote !== chart.value.rootNote) {
+        const name = newRootNote + chart.value.attrNote
+        const positions = chord.findPositions(newRootNote,
+          chart.value.attrNote)
+        newCharts.push({
+          kind: chart.kind,
+          value: {
+            name: name,
+            rootNote: newRootNote,
+            attrNote: chart.value.attrNote,
+            curPos: positions[0],
+            positions: positions
+          },
+          index: chart.index
+        })
+      } else {
+        newCharts.push(chart)
+      }
+    } else {
+      newCharts.push(chart)
+    }
+  }
+  return newCharts
 }
 
 const convertTextFrets = function (frets, baseFret) {
@@ -162,10 +166,7 @@ const rebuildingText = function (charts) {
 }
 
 export default {
-  tokenize,
-  validate,
+  parse,
   transpose,
-  convertChart,
-  convertTextFrets,
   rebuildingText
 }

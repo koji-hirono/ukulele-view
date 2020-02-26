@@ -10,6 +10,7 @@
           ></chord-diagram>
         </a>
       </span>
+      <span v-else-if="chart.kind === 'error'" class="error">{{chart.value}}</span>
       <span v-else-if="chart.kind === 'word'">{{chart.value | escapeChar}}</span>
       <span v-else-if="chart.kind === 'space'" class="space" v-text="chart.value">
       </span>
@@ -109,5 +110,8 @@ export default {
 }
 .selectpos {
   vertical-align: middle;
+}
+.error {
+  color: #c33;
 }
 </style>

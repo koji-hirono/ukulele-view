@@ -9,37 +9,47 @@ export default new Vuex.Store({
     key: 0,
     keyMin: -6,
     keyMax: 6,
-    tokens: []
+    charts: []
   },
   mutations: {
     keyUp (state) {
       if (state.key < state.keyMax) {
-        state.tokens = parser.transpose(state.tokens, 1)
+        state.charts = parser.transpose(state.charts, 1)
         state.key++
       }
     },
     keyDown (state) {
       if (state.key > state.keyMin) {
-        state.tokens = parser.transpose(state.tokens, -1)
+        state.charts = parser.transpose(state.charts, -1)
         state.key--
       }
     },
     keyReset (state) {
       if (state.key !== 0) {
-        state.tokens = parser.transpose(state.tokens, 0 - state.key)
+        state.charts = parser.transpose(state.charts, 0 - state.key)
         state.key = 0
       }
+    },
+    setCharts (state, charts) {
+      state.charts = charts
+    },
+    setChartPos (state, { index, pos }) {
+      state.charts.forEach(e => {
+        if (e.index === index) {
+          e.value.curPos = pos
+        }
+      })
     }
   },
   getters: {
     errors (state) {
-      return parser.validate(state.tokens)
+      return []
     },
     charts (state) {
-      return parser.convertChart(state.tokens)
+      return state.charts
     },
-    text (state, getters) {
-      return parser.rebuildingText(getters.charts)
+    text (state) {
+      return parser.rebuildingText(state.charts)
     }
   },
   actions: {
@@ -53,14 +63,10 @@ export default new Vuex.Store({
       context.commit('keyReset')
     },
     parse (context, text) {
-      context.state.tokens = parser.tokenize(text)
+      context.commit('setCharts', parser.parse(text))
     },
     setChartPos (context, { index, pos }) {
-      context.state.tokens.forEach(e => {
-        if (e.index === index) {
-          e.value.frets = parser.convertTextFrets(pos.frets, pos.baseFret)
-        }
-      })
+      context.commit('setChartPos', { index, pos })
     }
   },
   modules: {
