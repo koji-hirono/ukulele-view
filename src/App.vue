@@ -5,7 +5,7 @@
       <chart-form></chart-form>
     </div>
     <div id="chart">
-      <chart-view></chart-view>
+      <chart-preview></chart-preview>
     </div>
   </div>
 </template>
@@ -13,14 +13,14 @@
 <script>
 import KeyControl from '@/components/KeyControl'
 import ChartForm from '@/components/ChartForm'
-import ChartView from '@/components/ChartView'
+import ChartPreview from '@/components/ChartPreview'
 
 export default {
   name: 'Ukulele Chart',
   components: {
     KeyControl,
     ChartForm,
-    ChartView
+    ChartPreview
   }
 }
 </script>
