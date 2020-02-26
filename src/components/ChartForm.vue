@@ -1,9 +1,6 @@
 <template>
   <div>
     <textarea class="edit" :value="text" @input="inputText"></textarea>
-    <ul v-if="errors.length != 0">
-      <li v-for="error in errors" :key="error" class="error">{{ error }}</li>
-    </ul>
   </div>
 </template>
 
@@ -13,9 +10,6 @@ export default {
   computed: {
     text () {
       return this.$store.getters.text
-    },
-    errors () {
-      return this.$store.getters.errors
     }
   },
   methods: {
@@ -33,8 +27,5 @@ export default {
   font-family: monospace;
   font-size: 11pt;
   white-space: pre;
-}
-.error {
-  color: #c33;
 }
 </style>

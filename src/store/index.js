@@ -42,9 +42,6 @@ export default new Vuex.Store({
     }
   },
   getters: {
-    errors (state) {
-      return []
-    },
     charts (state) {
       return state.charts
     },

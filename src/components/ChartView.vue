@@ -112,6 +112,8 @@ export default {
   vertical-align: middle;
 }
 .error {
-  color: #c33;
+  color: #888;
+  font-family: monospace;
+  text-decoration: wavy underline #c33;
 }
 </style>
