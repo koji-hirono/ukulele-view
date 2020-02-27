@@ -1,20 +1,19 @@
 <template>
   <div>
-    <textarea class="edit" :value="text" @input="inputText"></textarea>
+    <textarea class="edit" :value="value" spellcheck="false" @input="inputText"
+    ></textarea>
   </div>
 </template>
 
 <script>
 export default {
   name: 'ChartForm',
-  computed: {
-    text () {
-      return this.$store.getters.text
-    }
+  props: {
+    value: String
   },
   methods: {
-    inputText (ev) {
-      this.$store.dispatch('parse', ev.target.value)
+    inputText (event) {
+      this.$emit('input', event.target.value)
     }
   }
 }

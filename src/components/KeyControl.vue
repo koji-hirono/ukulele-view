@@ -25,13 +25,20 @@
 <script>
 export default {
   name: 'KeyControl',
+  props: {
+    min: Number,
+    max: Number,
+    init: Number
+  },
+  data () {
+    return {
+      cur: 0
+    }
+  },
   computed: {
-    keyCurrent () {
-      return this.$store.state.key
-    },
     keyRange () {
       const a = []
-      for (let i = this.$store.state.keyMin; i <= this.$store.state.keyMax; i++) {
+      for (let i = this.min; i <= this.max; i++) {
         a.push(i)
       }
       return a
@@ -39,23 +46,35 @@ export default {
   },
   methods: {
     keyDown () {
-      this.$store.dispatch('keyDown')
+      if (this.cur > this.min) {
+        this.$emit('change', -1)
+        this.cur--
+      }
     },
     keyUp () {
-      this.$store.dispatch('keyUp')
+      if (this.cur < this.max) {
+        this.$emit('change', 1)
+        this.cur++
+      }
     },
     keyReset () {
-      this.$store.dispatch('keyReset')
+      if (this.cur !== 0) {
+        this.$emit('change', 0 - this.cur)
+        this.cur = 0
+      }
     },
     keyClass (key) {
       if (key === 0) {
         return 'zero'
-      } else if (key === this.keyCurrent) {
+      } else if (key === this.cur) {
         return 'active'
       } else {
         return 'notactive'
       }
     }
+  },
+  mounted () {
+    this.cur = this.init
   }
 }
 </script>

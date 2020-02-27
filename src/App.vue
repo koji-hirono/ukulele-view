@@ -1,11 +1,11 @@
 <template>
   <div id="app">
     <div id="edit">
-      <key-control></key-control>
-      <chart-form></chart-form>
+      <key-control :min="-6" :max="6" :init="0" @change="changeKey"></key-control>
+      <chart-form :value="text" @input="inputText"></chart-form>
     </div>
     <div id="chart">
-      <chart-preview></chart-preview>
+      <chart-preview :charts="charts" @change="changePosition"></chart-preview>
     </div>
   </div>
 </template>
@@ -14,6 +14,7 @@
 import KeyControl from '@/components/KeyControl'
 import ChartForm from '@/components/ChartForm'
 import ChartPreview from '@/components/ChartPreview'
+import parser from '@/lib/parser.js'
 
 export default {
   name: 'Ukulele Chart',
@@ -21,6 +22,30 @@ export default {
     KeyControl,
     ChartForm,
     ChartPreview
+  },
+  data () {
+    return {
+      charts: []
+    }
+  },
+  computed: {
+    text () {
+      return parser.rebuildingText(this.charts)
+    }
+  },
+  methods: {
+    inputText (data) {
+      this.charts = parser.parse(data)
+    },
+    changeKey (degree) {
+      this.charts = parser.transpose(this.charts, degree)
+    },
+    changePosition ({ index, pos }) {
+      const chord = this.charts.find(e => e.index === index)
+      if (chord) {
+        chord.value.curPos = pos
+      }
+    }
   }
 }
 </script>

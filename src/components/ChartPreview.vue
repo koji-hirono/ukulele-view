@@ -44,20 +44,20 @@ import BaseModal from '@/components/BaseModal'
 
 export default {
   name: 'ChartView',
+  components: {
+    ChordDiagram,
+    BaseModal
+  },
+  props: {
+    charts: Array
+  },
   data () {
     return {
       showModal: false,
       selectedChart: null
     }
   },
-  components: {
-    ChordDiagram,
-    BaseModal
-  },
   computed: {
-    charts () {
-      return this.$store.getters.charts
-    },
     selectedPositions () {
       return this.selectedChart.value.positions
     }
@@ -73,11 +73,10 @@ export default {
       this.showModal = true
     },
     selectPos (pos) {
-      this.$store.dispatch('setChartPos', {
+      this.$emit('change', {
         index: this.selectedChart.index,
         pos: pos
       })
-      this.selectedChart.value.curPos = pos
     },
     isChecked (pos) {
       const curPos = this.selectedChart.value.curPos
