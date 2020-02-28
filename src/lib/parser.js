@@ -1,39 +1,54 @@
 import chord from '@/lib/chord.js'
 
-const tokenize = function (text) {
-  const specs = [
-    ['chord', '[A-G][#b]?[a-zA-Z0-9_()]*(?:@\\d+)?'],
-    ['space', '[ \\t]+'],
-    ['newline', '\\n'],
-    ['word', '[^ \\t\\n]+']
-  ]
-  const tokreg = specs.map(e => '(' + e[1] + ')').join('|')
-  const re = new RegExp(tokreg, 'ug')
-  const tokens = []
-  let m
-  while ((m = re.exec(text)) != null) {
-    const kind = specs.find((e, i) => m[i + 1] !== undefined)[0]
-    let value
-    if (kind === 'chord') {
-      const ma = m[0].match(/^([A-G][#b]?)([a-zA-Z0-9_()]*)(@\d+)?$/u)
-      const rootNote = ma[1]
-      const attrNote = ma[2]
-      const frets = ma[3]
-      value = {
-        rootNote: rootNote,
-        attrNote: attrNote !== undefined ? attrNote : '',
-        frets: frets !== undefined ? frets.slice(1) : ''
-      }
-    } else {
-      value = m[0]
-    }
-    tokens.push({
-      kind: kind,
-      value: value,
-      index: m.index
-    })
+const parseAttrNote = function (text) {
+  if (text === undefined) {
+    return ''
   }
-  return tokens
+  return text
+}
+
+const parseFrets = function (text) {
+  if (text === undefined) {
+    return null
+  }
+  const frets = []
+  let multiDigits = false
+  let value = 0
+  for (let index = 0; index < text.length; index++) {
+    const ch = text[index]
+    switch (ch) {
+      case '@':
+        break
+      case '(':
+        multiDigits = true
+        break
+      case ')':
+        multiDigits = false
+        frets.push(value)
+        value = 0
+        break
+      case 'x':
+        frets.push(-1)
+        break
+      case '0':
+      case '1':
+      case '2':
+      case '3':
+      case '4':
+      case '5':
+      case '6':
+      case '7':
+      case '8':
+      case '9':
+        if (multiDigits) {
+          value = value * 10 + parseInt(ch)
+        } else {
+          frets.push(parseInt(ch))
+        }
+        break
+    }
+  }
+  return frets
 }
 
 const findPosition = function (positions, frets) {
@@ -41,7 +56,13 @@ const findPosition = function (positions, frets) {
     if (pos.frets.length !== frets.length) {
       return null
     }
-    const f = pos.frets.map(e => e + pos.baseFret - 1)
+    const f = pos.frets.map(e => {
+      if (e <= 0) {
+        return e
+      } else {
+        return e + pos.baseFret - 1
+      }
+    })
     let found = true
     for (let i = 0; i < f.length; i++) {
       if (f[i] !== frets[i]) {
@@ -56,113 +77,258 @@ const findPosition = function (positions, frets) {
   return null
 }
 
-const convertChart = function (tokens) {
-  const charts = []
-  for (const token of tokens) {
-    if (token.kind === 'chord') {
-      const origName = token.value.rootNote + token.value.attrNote
-      const positions = chord.findPositions(token.value.rootNote,
-        token.value.attrNote)
+const parseChords = function (r) {
+  if (!r) {
+    return null
+  }
+  const text = r.text.slice(r.start, r.end)
+  const offset = r.start
+  let lineNum = r.lineNum
+  const specs = [
+    ['chord', '[A-G][#b]?[a-zA-Z0-9_()]*(?:@[x0-9()]+)?'],
+    ['space', '[ \\t]+'],
+    ['newline', '\\n'],
+    ['word', '[^ \\t\\n]+']
+  ]
+  const tokreg = specs.map(e => '(' + e[1] + ')').join('|')
+  const re = new RegExp(tokreg, 'ug')
+  const tokens = []
+  let m
+  while ((m = re.exec(text)) != null) {
+    let kind = specs.find((e, i) => m[i + 1] !== undefined)[0]
+    let value
+    if (kind === 'chord') {
+      const ma = m[0].match(/^([A-G][#b]?)([a-zA-Z0-9_()]*)(@[x0-9()]+)?$/u)
+      const rootNote = ma[1]
+      const attrNote = parseAttrNote(ma[2])
+      const frets = parseFrets(ma[3])
+      const positions = chord.findPositions(rootNote, attrNote)
       if (!positions) {
-        let value = token.value.rootNote + token.value.attrNote
-        if (token.value.frets !== '') {
-          value += '@' + token.value.frets
-        }
-        charts.push({
-          kind: 'error',
-          value: value,
-          index: token.index
-        })
+        kind = 'word'
+        value = m[0]
       } else {
         let curPos
-        if (token.value.frets !== '') {
-          const frets = Array.prototype.map.call(
-            token.value.frets, c => parseInt(c))
+        if (frets) {
           curPos = findPosition(positions, frets)
           if (!curPos) {
             const max = Math.max(...frets)
             const baseFret = max < 5 ? 1 : max - 3
             curPos = {
-              frets: frets.map(e => e - baseFret + 1),
+              frets: frets.map(e => {
+                if (e <= 0) {
+                  return e
+                } else {
+                  return e - baseFret + 1
+                }
+              }),
               baseFret: baseFret
             }
           }
         } else {
           curPos = positions[0]
         }
-        const value = {
-          name: origName,
-          rootNote: token.value.rootNote,
-          attrNote: token.value.attrNote,
+        value = {
+          name: rootNote + attrNote,
+          rootNote: rootNote,
+          attrNote: attrNote,
+          frets: frets,
           curPos: curPos,
           positions: positions
         }
-        charts.push({
-          kind: token.kind,
-          value: value,
-          index: token.index
-        })
       }
+    } else if (kind === 'space') {
+      continue
+    } else if (kind === 'newline') {
+      lineNum++
+      continue
     } else {
-      charts.push(token)
+      value = m[0]
     }
+    tokens.push({
+      kind: kind,
+      value: value,
+      index: offset + m.index,
+      length: m[0].length,
+      lineNum: lineNum
+    })
   }
-  return charts
+  return tokens
+}
+
+const parseLyrics = function (r) {
+  if (!r) {
+    return null
+  }
+  return {
+    kind: 'lyrics',
+    value: r.text.slice(r.start, r.end),
+    index: r.start,
+    lineNum: r.lineNum
+  }
 }
 
 const parse = function (text) {
-  const tokens = tokenize(text)
-  return convertChart(tokens)
+  const State = {
+    OUT: 0,
+    IN: 1
+  }
+  const chart = []
+  let chartItem = []
+  let escaped = false
+  let chords = null
+  let lyrics = null
+  let state = State.OUT
+  let lineNum = 1
+
+  for (let index = 0; index < text.length; index++) {
+    const ch = text[index]
+    if (ch === '\\') {
+      if (escaped) {
+        escaped = false
+      } else {
+        escaped = true
+        continue
+      }
+    } else if (ch === ' ' || ch === '\t') {
+      continue
+    } else if (ch === '\r' || ch === '\n') {
+      lineNum++
+      continue
+    } else if (ch === ';') {
+      if (chords || lyrics) {
+        chartItem.push({
+          chords: parseChords(chords),
+          lyrics: parseLyrics(lyrics)
+        })
+        chart.push(chartItem)
+        chartItem = []
+      }
+      chords = null
+      lyrics = null
+      continue
+    }
+
+    switch (state) {
+      case State.OUT:
+        if (ch === '[') {
+          state = State.IN
+          if (chords || lyrics) {
+            chartItem.push({
+              chords: parseChords(chords),
+              lyrics: parseLyrics(lyrics)
+            })
+            chords = null
+            lyrics = null
+          }
+          chords = {
+            text: text,
+            start: index + 1,
+            end: index + 1,
+            lineNum: lineNum
+          }
+        } else {
+          if (!lyrics) {
+            lyrics = {
+              text: text,
+              start: index,
+              end: index + 1,
+              lineNum: lineNum
+            }
+          } else {
+            lyrics.end = index + 1
+          }
+        }
+        break
+      case State.IN:
+        if (ch === ']') {
+          state = State.OUT
+        } else {
+          chords.end = index + 1
+        }
+        break
+    }
+  }
+
+  if (chords || lyrics) {
+    chartItem.push({
+      chords: parseChords(chords),
+      lyrics: parseLyrics(lyrics)
+    })
+    chart.push(chartItem)
+  }
+
+  return chart
 }
 
-const transpose = function (charts, degree) {
-  const newCharts = []
-  for (const chart of charts) {
-    if (chart.kind === 'chord') {
-      const newRootNote = chord.transpose(chart.value.rootNote, degree)
-      if (newRootNote !== chart.value.rootNote) {
-        const name = newRootNote + chart.value.attrNote
-        const positions = chord.findPositions(newRootNote,
-          chart.value.attrNote)
-        newCharts.push({
-          kind: chart.kind,
+const transpose = function (chart, degree) {
+  return chart.map(chartLine => chartLine.map(chartItem => {
+    return {
+      chords: chartItem.chords ? chartItem.chords.map(c => {
+        if (c.kind !== 'chord') {
+          return c
+        }
+        const newRootNote = chord.transpose(c.value.rootNote, degree)
+        if (newRootNote === c.value.rootNote) {
+          return c
+        }
+        const name = newRootNote + c.value.attrNote
+        const positions = chord.findPositions(newRootNote, c.value.attrNote)
+        return {
+          kind: c.kind,
           value: {
             name: name,
             rootNote: newRootNote,
-            attrNote: chart.value.attrNote,
+            attrNote: c.value.attrNote,
             curPos: positions[0],
             positions: positions
           },
-          index: chart.index
-        })
-      } else {
-        newCharts.push(chart)
-      }
-    } else {
-      newCharts.push(chart)
+          length: c.length,
+          index: c.index
+        }
+      }) : null,
+      lyrics: chartItem.lyrics
     }
-  }
-  return newCharts
+  }))
 }
 
 const convertTextFrets = function (frets, baseFret) {
-  return frets.map(e => String(e + baseFret - 1)).join('')
+  return frets.map(e => {
+    if (e === 0) {
+      return String(e)
+    } else if (e === -1) {
+      return 'x'
+    } else if (e + baseFret - 1 >= 10) {
+      return '(' + String(e + baseFret - 1) + ')'
+    } else {
+      return String(e + baseFret - 1)
+    }
+  }).join('')
 }
 
-const rebuildingText = function (charts) {
-  let text = ''
-  for (const chart of charts) {
-    if (chart.kind === 'chord') {
-      const value = chart.value
-      text += value.name
-      if (value.curPos !== value.positions[0]) {
-        text += '@' + convertTextFrets(value.curPos.frets, value.curPos.baseFret)
+const rebuildingText = function (chart, text) {
+  let newText = ''
+  let start = 0
+  for (const chartLine of chart) {
+    for (const chartItem of chartLine) {
+      if (chartItem.chords) {
+        for (const e of chartItem.chords) {
+          if (e.kind === 'chord') {
+            const value = e.value
+            let word = value.name
+            if (value.curPos !== value.positions[0]) {
+              word += '@'
+              word += convertTextFrets(value.curPos.frets, value.curPos.baseFret)
+            }
+            newText += text.slice(start, e.index)
+            newText += word
+            start = e.index + e.length
+          }
+        }
       }
-    } else {
-      text += chart.value
     }
   }
-  return text
+  newText += text.slice(start)
+  return newText
 }
 
 export default {

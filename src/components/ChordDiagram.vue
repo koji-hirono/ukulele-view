@@ -13,6 +13,22 @@
           cx="3" cy="20" r="2" fill="#fff" stroke="#000"/>
       <circle v-if="openStringVisible[3]"
           cx="3" cy="30" r="2" fill="#fff" stroke="#000"/>
+      <line v-if="muteStringVisible[0]"
+          x1="1" y1="0" x2="5" y2="5" stroke="#000"/>
+      <line v-if="muteStringVisible[0]"
+          x1="1" y1="5" x2="5" y2="0" stroke="#000"/>
+      <line v-if="muteStringVisible[1]"
+          x1="1" y1="10" x2="5" y2="15" stroke="#000"/>
+      <line v-if="muteStringVisible[1]"
+          x1="1" y1="15" x2="5" y2="10" stroke="#000"/>
+      <line v-if="muteStringVisible[2]"
+          x1="1" y1="20" x2="5" y2="25" stroke="#000"/>
+      <line v-if="muteStringVisible[2]"
+          x1="1" y1="25" x2="5" y2="20" stroke="#000"/>
+      <line v-if="muteStringVisible[3]"
+          x1="1" y1="30" x2="5" y2="35" stroke="#000"/>
+      <line v-if="muteStringVisible[3]"
+          x1="1" y1="35" x2="5" y2="30" stroke="#000"/>
       <!-- frame -->
       <g transform="translate(8, 0)">
         <!-- string -->
@@ -64,6 +80,9 @@ export default {
     },
     openStringVisible () {
       return this.frets.map(e => e === 0)
+    },
+    muteStringVisible () {
+      return this.frets.map(e => e === -1)
     },
     baseFretVisible () {
       return this.baseFret !== 1

@@ -5,7 +5,7 @@
       <chart-form :value="text" @input="inputText"></chart-form>
     </div>
     <div id="chart">
-      <chart-preview :charts="charts" @change="changePosition"></chart-preview>
+      <chart-preview :chart="chart" @change="changePosition"></chart-preview>
     </div>
   </div>
 </template>
@@ -25,26 +25,33 @@ export default {
   },
   data () {
     return {
-      charts: []
-    }
-  },
-  computed: {
-    text () {
-      return parser.rebuildingText(this.charts)
+      text: '',
+      chart: []
     }
   },
   methods: {
     inputText (data) {
-      this.charts = parser.parse(data)
+      this.text = data
+      this.chart = parser.parse(data)
     },
     changeKey (degree) {
-      this.charts = parser.transpose(this.charts, degree)
+      this.chart = parser.transpose(this.chart, degree)
+      this.text = parser.rebuildingText(this.chart, this.text)
+      this.chart = parser.parse(this.text)
     },
     changePosition ({ index, pos }) {
-      const chord = this.charts.find(e => e.index === index)
-      if (chord) {
-        chord.value.curPos = pos
-      }
+      this.chart.forEach(chartLine => {
+        chartLine.forEach(chartItem => {
+          if (chartItem.chords) {
+            const chord = chartItem.chords.find(c => c.index === index)
+            if (chord) {
+              chord.value.curPos = pos
+            }
+          }
+        })
+      })
+      this.text = parser.rebuildingText(this.chart, this.text)
+      this.chart = parser.parse(this.text)
     }
   }
 }
