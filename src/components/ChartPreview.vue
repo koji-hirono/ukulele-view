@@ -113,7 +113,7 @@ export default {
 }
 .chart-line {
   display: flex;
-  align-items: flex-end;
+  margin: 0.25em 0;
 }
 .chart-item {
   display: flex;
@@ -121,6 +121,7 @@ export default {
   width: max-content;
 }
 .chord {
+  height: 65px;
 }
 .lyrics {
   margin: 0 0.25em;
