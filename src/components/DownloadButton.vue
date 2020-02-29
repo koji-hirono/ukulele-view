@@ -1,38 +1,60 @@
 <template>
-  <div class="button">
-    <a :href="url" :download="name">
-      <svg width="30" height="30" viewBox="0 0 100 100">
-        <!-- arrow -->
-        <line x1="50" y1="20" x2="50" y2="60" stroke="#000"
-          stroke-linecap="round"
-          stroke-width="10"/>
-        <line x1="35" y1="50" x2="50" y2="60" stroke="#000"
-          stroke-linecap="round"
-          stroke-width="10"/>
-        <line x1="65" y1="50" x2="50" y2="60" stroke="#000"
-          stroke-linecap="round"
-          stroke-width="10"/>
-        <!-- box -->
-        <line x1="20" y1="60" x2="20" y2="80" stroke="#000"
-          stroke-linecap="round"
-          stroke-width="10"/>
-        <line x1="80" y1="60" x2="80" y2="80" stroke="#000"
-          stroke-linecap="round"
-          stroke-width="10"/>
-        <line x1="20" y1="80" x2="80" y2="80" stroke="#000"
-          stroke-linecap="round"
-          stroke-width="10"/>
-      </svg>
-    </a>
+  <div>
+    <div v-show="url !== ''" class="button">
+      <a href="#" @click="showModal = true; filename = name">
+        <svg width="30" height="30" viewBox="0 0 100 100">
+          <!-- arrow -->
+          <line x1="50" y1="20" x2="50" y2="60" stroke="#000"
+            stroke-linecap="round"
+            stroke-width="10"/>
+          <line x1="35" y1="50" x2="50" y2="60" stroke="#000"
+            stroke-linecap="round"
+            stroke-width="10"/>
+          <line x1="65" y1="50" x2="50" y2="60" stroke="#000"
+            stroke-linecap="round"
+            stroke-width="10"/>
+          <!-- box -->
+          <line x1="20" y1="60" x2="20" y2="80" stroke="#000"
+            stroke-linecap="round"
+            stroke-width="10"/>
+          <line x1="80" y1="60" x2="80" y2="80" stroke="#000"
+            stroke-linecap="round"
+            stroke-width="10"/>
+          <line x1="20" y1="80" x2="80" y2="80" stroke="#000"
+            stroke-linecap="round"
+            stroke-width="10"/>
+        </svg>
+      </a>
+    </div>
+    <base-modal v-show="showModal" @close="showModal = false">
+      <h3 slot="header">Download file</h3>
+      <div slot="body">
+        <label>Filename: <input type="text" v-model="filename"
+          :value="filename"></label>
+        <a v-if="filename !== ''" :href="url" :download="filename"
+          @click="showModal = false">Download</a>
+      </div>
+    </base-modal>
   </div>
 </template>
 
 <script>
+import BaseModal from '@/components/BaseModal'
+
 export default {
   name: 'DownloadButton',
+  components: {
+    BaseModal
+  },
   props: {
     name: String,
     text: String
+  },
+  data () {
+    return {
+      filename: '',
+      showModal: false
+    }
   },
   computed: {
     url () {
