@@ -1,7 +1,14 @@
 <template>
   <div id="app">
     <div id="edit">
-      <key-control :min="-6" :max="6" :init="0" @change="changeKey"></key-control>
+      <div id="control">
+        <key-control :min="-6" :max="6" :init="0" @change="changeKey"
+        ></key-control>
+        <div id="menu">
+          <upload-button @change="loadFile"></upload-button>
+          <download-button :name="name" :text="text"></download-button>
+        </div>
+      </div>
       <chart-form :value="text" @input="inputText"></chart-form>
     </div>
     <div id="chart">
@@ -11,6 +18,8 @@
 </template>
 
 <script>
+import UploadButton from '@/components/UploadButton'
+import DownloadButton from '@/components/DownloadButton'
 import KeyControl from '@/components/KeyControl'
 import ChartForm from '@/components/ChartForm'
 import ChartPreview from '@/components/ChartPreview'
@@ -19,17 +28,25 @@ import parser from '@/lib/parser.js'
 export default {
   name: 'Ukulele Chart',
   components: {
+    UploadButton,
+    DownloadButton,
     KeyControl,
     ChartForm,
     ChartPreview
   },
   data () {
     return {
+      name: '',
       text: '',
       chart: []
     }
   },
   methods: {
+    loadFile ({ name, text }) {
+      this.name = name
+      this.text = text
+      this.chart = parser.parse(this.text)
+    },
     inputText (data) {
       this.text = data
       this.chart = parser.parse(data)
@@ -67,6 +84,14 @@ export default {
 #edit {
   margin: 0 0;
   padding: 0 1em;
+}
+#control {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+#menu {
+  display: flex;
 }
 #chart {
   margin: 0 0;
