@@ -83,7 +83,7 @@ export default {
 }
 #edit {
   margin: 0 0;
-  padding: 0 1em;
+  padding: 0 1rem;
 }
 #control {
   display: flex;
@@ -95,7 +95,7 @@ export default {
 }
 #chart {
   margin: 0 0;
-  padding: 0.5em 1em;
+  padding: 0.5rem 1rem;
   flex-grow: 1;
   background-color: #ffc;
 }

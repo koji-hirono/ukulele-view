@@ -18,7 +18,7 @@
         </div>
         <div v-else class="chord">&nbsp;</div>
         <div v-if="chartItem.lyrics" class="lyrics">
-          <div>{{ chartItem.lyrics.value }}</div>
+          {{ chartItem.lyrics.value }}
         </div>
       </div>
     </div>
@@ -113,7 +113,8 @@ export default {
 }
 .chart-line {
   display: flex;
-  margin: 0.25em 0;
+  margin: 1rem 0;
+  /* border-bottom: solid 1px #ccc; */
 }
 .chart-item {
   display: flex;
@@ -121,10 +122,10 @@ export default {
   width: max-content;
 }
 .chord {
-  height: 65px;
+  height: 60px;
 }
 .lyrics {
-  margin: 0 0.25em;
+  margin: 0 0.25rem;
 }
 .space {
   white-space: pre;

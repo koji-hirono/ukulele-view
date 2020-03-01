@@ -58,7 +58,7 @@ export default {
 
 <style scoped>
 .button {
-  margin: 1em 0.25em;
+  margin: 1rem 0.25rem;
   padding: 3px;
   text-decolation: none;
   border: solid 1px #888;

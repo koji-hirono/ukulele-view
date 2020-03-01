@@ -81,20 +81,20 @@ export default {
 
 <style scoped>
 .container {
-  margin: 0.5em 0;
-  padding: 0.5em 0;
+  margin: 0.5rem 0;
+  padding: 0.5rem 0;
   display: flex;
   width: max-content;
   flex-direction: column;
 }
 .control-bar {
-  margin: 0.5em 0;
+  margin: 0.5rem 0;
   display: flex;
   justify-content: space-between;
 }
 .control-button {
-  width: 2em;
-  height: 2em;
+  width: 2rem;
+  height: 2rem;
   font-size: 14pt;
   font-family: Helvetica, Arial, sans-serif;
   text-align: center;
