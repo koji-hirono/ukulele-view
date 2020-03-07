@@ -53,25 +53,14 @@ const parseFrets = function (text) {
 
 const findPosition = function (positions, frets) {
   for (const pos of positions) {
-    if (pos.frets.length !== frets.length) {
+    const f = pos.frets
+    if (f.length !== frets.length) {
       return null
     }
-    const f = pos.frets.map(e => {
-      if (e <= 0) {
-        return e
-      } else {
-        return e + pos.baseFret - 1
-      }
-    })
-    let found = true
     for (let i = 0; i < f.length; i++) {
       if (f[i] !== frets[i]) {
-        found = false
-        break
+        return pos
       }
-    }
-    if (found) {
-      return pos
     }
   }
   return null
@@ -111,17 +100,8 @@ const parseChords = function (r) {
         if (frets) {
           curPos = findPosition(positions, frets)
           if (!curPos) {
-            const max = Math.max(...frets)
-            const baseFret = max < 5 ? 1 : max - 3
             curPos = {
-              frets: frets.map(e => {
-                if (e <= 0) {
-                  return e
-                } else {
-                  return e - baseFret + 1
-                }
-              }),
-              baseFret: baseFret
+              frets: frets
             }
           }
         } else {
@@ -291,16 +271,16 @@ const transpose = function (chart, degree) {
   }))
 }
 
-const convertTextFrets = function (frets, baseFret) {
+const convertTextFrets = function (frets) {
   return frets.map(e => {
     if (e === 0) {
       return String(e)
     } else if (e === -1) {
       return 'x'
-    } else if (e + baseFret - 1 >= 10) {
-      return '(' + String(e + baseFret - 1) + ')'
+    } else if (e >= 10) {
+      return '(' + String(e) + ')'
     } else {
-      return String(e + baseFret - 1)
+      return String(e)
     }
   }).join('')
 }
@@ -317,7 +297,7 @@ const rebuildingText = function (chart, text) {
             let word = value.name
             if (value.curPos !== value.positions[0]) {
               word += '@'
-              word += convertTextFrets(value.curPos.frets, value.curPos.baseFret)
+              word += convertTextFrets(value.curPos.frets)
             }
             newText += text.slice(start, e.index)
             newText += word

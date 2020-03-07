@@ -9,7 +9,6 @@
                 <chord-diagram
                   :name="chord.value.name"
                   :frets="chord.value.curPos.frets"
-                  :baseFret="chord.value.curPos.baseFret"
                 ></chord-diagram>
               </a>
             </span>
@@ -34,7 +33,6 @@
             <chord-diagram
               :name="selectedChord.value.name"
               :frets="pos.frets"
-              :baseFret="pos.baseFret"
               class="selectpos"
             ></chord-diagram>
           </label>
@@ -87,9 +85,6 @@ export default {
     },
     isChecked (pos) {
       const curPos = this.selectedChord.value.curPos
-      if (curPos.baseFret !== pos.baseFret) {
-        return false
-      }
       if (curPos.frets[0] !== pos.frets[0]) {
         return false
       }

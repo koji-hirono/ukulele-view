@@ -71,24 +71,36 @@ export default {
   name: 'ChordDiagram',
   props: {
     name: String,
-    frets: Array,
-    baseFret: Number
+    frets: Array
   },
   computed: {
+    baseFret () {
+      const max = Math.max(...this.frets)
+      return max < 5 ? 1 : max - 3
+    },
+    fretIndexs () {
+      return this.frets.map(e => {
+        if (e <= 0) {
+          return e
+        } else {
+          return e - this.baseFret + 1
+        }
+      })
+    },
     closedStringVisible () {
-      return this.frets.map(e => e > 0)
+      return this.fretIndexs.map(e => e > 0)
     },
     openStringVisible () {
-      return this.frets.map(e => e === 0)
+      return this.fretIndexs.map(e => e === 0)
     },
     muteStringVisible () {
-      return this.frets.map(e => e === -1)
+      return this.fretIndexs.map(e => e === -1)
     },
     baseFretVisible () {
       return this.baseFret !== 1
     },
     fretX () {
-      return this.frets.map(e => (e - 1) * 14 + 7)
+      return this.fretIndexs.map(e => (e - 1) * 14 + 7)
     }
   }
 }
