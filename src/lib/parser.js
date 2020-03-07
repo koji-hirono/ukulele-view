@@ -75,6 +75,7 @@ const parseChords = function (r) {
   let lineNum = r.lineNum
   const specs = [
     ['chord', '[A-G][#b]?[a-zA-Z0-9_()]*(?:@[x0-9()]+)?'],
+    ['frets', '@[x0-9()]+'],
     ['space', '[ \\t]+'],
     ['newline', '\\n'],
     ['word', '[^ \\t\\n]+']
@@ -115,6 +116,19 @@ const parseChords = function (r) {
           curPos: curPos,
           positions: positions
         }
+      }
+    } else if (kind === 'frets') {
+      kind = 'chord'
+      const frets = parseFrets(m[0])
+      value = {
+        name: '',
+        rootNote: '',
+        attrNote: '',
+        frets: frets,
+        curPos: {
+          frets: frets
+        },
+        positions: null
       }
     } else if (kind === 'space') {
       continue

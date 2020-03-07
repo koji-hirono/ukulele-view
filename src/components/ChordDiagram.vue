@@ -1,7 +1,7 @@
 <template>
   <svg width="70" height="60" viewBox="0 0 70 60">
     <!-- chord name -->
-    <text x="0" y="11" font-size="10">{{ name }}</text>
+    <text v-if="name" x="0" y="11" font-size="10">{{ name }}</text>
 
     <g transform="translate(0,18)">
       <!-- open string -->
