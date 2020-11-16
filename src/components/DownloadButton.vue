@@ -29,7 +29,7 @@
       <h3 slot="header">Download file</h3>
       <div slot="body">
         <label>Filename: <input type="text" v-model="filename"
-          :value="filename"></label>
+          ></label>
         <a v-if="filename !== ''" :href="url" :download="filename"
           @click="showModal = false">Download</a>
       </div>

@@ -55,12 +55,17 @@ const findPosition = function (positions, frets) {
   for (const pos of positions) {
     const f = pos.frets
     if (f.length !== frets.length) {
-      return null
+      continue
     }
+    let matched = true
     for (let i = 0; i < f.length; i++) {
       if (f[i] !== frets[i]) {
-        return pos
+        matched = false
+        break
       }
+    }
+    if (matched) {
+      return pos
     }
   }
   return null

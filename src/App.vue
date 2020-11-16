@@ -26,7 +26,7 @@ import ChartPreview from '@/components/ChartPreview'
 import parser from '@/lib/parser.js'
 
 export default {
-  name: 'Ukulele Chart',
+  name: 'UkuleleChart',
   components: {
     UploadButton,
     DownloadButton,
