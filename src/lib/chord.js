@@ -102,7 +102,28 @@ const findPositions = function (rootNote, attr) {
   return chordTable[name]
 }
 
+const swapPosition = function (name, a, b) {
+  if (!(name in chordTable)) {
+    return
+  }
+
+  const positions = chordTable[name]
+
+  if (a >= positions.length) {
+    return
+  }
+
+  if (b >= positions.length) {
+    return
+  }
+
+  const t = chordTable[name][a]
+  chordTable[name][a] = chordTable[name][b]
+  chordTable[name][b] = t
+}
+
 export default {
   transpose,
-  findPositions
+  findPositions,
+  swapPosition
 }
