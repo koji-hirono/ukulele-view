@@ -66,6 +66,10 @@ export default {
   filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.2));
   color: #000;
   background-color: #fff;
+  cursor: pointer;
+}
+.button label {
+  cursor: pointer;
 }
 .button:active {
   transform: translateY(4px);

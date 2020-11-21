@@ -103,12 +103,14 @@ export default {
   filter: drop-shadow(4px 4px 4px rgba(0, 0, 0, 0.4));
   background-color: #333;
   color: #fff;
+  cursor: pointer;
 }
 .control-button:active {
   transform: translateY(4px);
   filter: none;
 }
 .meter {
+  cursor: default;
 }
 .active {
   color: #c33;
